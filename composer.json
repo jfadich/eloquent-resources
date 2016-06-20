@@ -1,0 +1,19 @@
+{
+    "name": "jfadich/json-responder",
+    "description": "Easily generate JSON responses for Laravel 5.1+",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "John Fadich",
+            "email": "jofad4@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Jfadich\\JsonResponder\\": "src/"
+        }
+    },
+    "require": {
+        "illuminate/http": "^5.1"
+    }
+}
