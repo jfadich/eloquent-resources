@@ -37,7 +37,7 @@ trait RespondsWithJson
 
     /**
      * @param $message
-     * @return Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function respondWithError($message)
     {
@@ -56,7 +56,7 @@ trait RespondsWithJson
 
     /**
      * @param string $message
-     * @return Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function respondNotFound($message = 'Resource not found')
     {
@@ -65,7 +65,7 @@ trait RespondsWithJson
 
     /**
      * @param string $message
-     * @return Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function respondUnauthorized($message = 'You are not authorized')
     {
@@ -74,7 +74,7 @@ trait RespondsWithJson
 
     /**
      * @param string $message
-     * @return Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function respondForbidden($message = 'You are forbidden')
     {
@@ -83,7 +83,7 @@ trait RespondsWithJson
 
     /**
      * @param string $message
-     * @return Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function respondInternalError($message = 'Internal Error')
     {
@@ -92,7 +92,7 @@ trait RespondsWithJson
 
     /**
      * @param string $message
-     * @return Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function respondBadRequest($message = 'Bad Request')
     {
@@ -101,7 +101,7 @@ trait RespondsWithJson
 
     /**
      * @param string $message
-     * @return Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function respondUnprocessableEntity($message = 'Incomplete or invalid entity')
     {
@@ -109,9 +109,27 @@ trait RespondsWithJson
     }
 
     /**
+     * @param $item
+     * @param array $meta
+     * @return \Illuminate\Http\JsonResponse
+     */
+    protected function respondCreated($item, $meta = [])
+    {
+        return $this->setStatusCode(Response::HTTP_CREATED)->respondWithItem($item, $meta);
+    }
+
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function respondDeleted()
+    {
+        return $this->setStatusCode(Response::HTTP_NO_CONTENT)->respond('');
+    }
+
+    /**
      * Get HTTP Status Code
      *
-     * @return mixed
+     * @return int
      */
     public function getStatusCode()
     {
