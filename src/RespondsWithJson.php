@@ -109,21 +109,23 @@ trait RespondsWithJson
     }
 
     /**
-     * @param $item
-     * @param array $meta
+     * @param array $headers
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function respondCreated($item, $meta = [])
+    public function respondNoContent($headers = [])
     {
-        return $this->setStatusCode(Response::HTTP_CREATED)->respondWithItem($item, $meta);
+        return $this->setStatusCode(Response::HTTP_NO_CONTENT)->makeResponse('', $headers);
     }
 
     /**
+     * Alias for respondNoContent()
+     *
+     * @param array $headers
      * @return \Illuminate\Http\JsonResponse
      */
-    public function respondDeleted()
+    public function respondDeleted($headers = [])
     {
-        return $this->setStatusCode(Response::HTTP_NO_CONTENT)->respond('');
+        return $this->respondNoContent($headers);
     }
 
     /**
