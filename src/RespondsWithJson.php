@@ -135,7 +135,7 @@ trait RespondsWithJson
      */
     public function respondConflict($message)
     {
-        return $this->setErrorCode(Response::HTTP_CONFLICT)->respondWithError($message);
+        return $this->setStatusCode(Response::HTTP_CONFLICT)->respondWithError($message);
     }
 
     /**
