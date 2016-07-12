@@ -129,6 +129,16 @@ trait RespondsWithJson
     }
 
     /**
+     * 
+     * @param $message
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function respondConflict($message)
+    {
+        return $this->setErrorCode(Response::HTTP_CONFLICT)->respondWithError($message);
+    }
+
+    /**
      * Get HTTP Status Code
      *
      * @return int
