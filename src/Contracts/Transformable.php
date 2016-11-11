@@ -11,5 +11,7 @@ interface Transformable
      */
     public function getResourceType();
 
+    public function getTransformer();
+
     public function getByResourceType($type, $id);
 }
