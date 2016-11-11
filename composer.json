@@ -10,7 +10,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "Jfadich\\JsonResponder\\": "src/"
+            "jfadich\\JsonResponder\\": "src/"
         }
     },
     "require": {
