@@ -16,7 +16,7 @@ class LaravelServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__.'../../config/config.php' => config_path('transformers.php'),
+            __DIR__.'/../../config/config.php' => config_path('transformers.php'),
         ]);
     }
 
@@ -28,7 +28,7 @@ class LaravelServiceProvider extends ServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(
-            __DIR__.'../../config/config.php', 'transformers'
+            __DIR__.'/../../config/config.php', 'transformers'
         );
 
         $this->app->singleton(TransformationManager::class, function ($app) {
