@@ -16,6 +16,18 @@ class TransformationManager
 
     protected $presentersNamespace = 'App\\Presenters';
 
+    public function __construct($model = null, $transformer = null, $presenter = null)
+    {
+        if($model !== null)
+            $this->modelNamespace = $model;
+
+        if($transformer !== null)
+            $this->transformerNamespace = $transformer;
+
+        if($presenter !== null)
+            $this->presentersNamespace = $presenter;
+    }
+
     /**
      * Reverse of getResourceType. Return the Class name from the given type.
      *
