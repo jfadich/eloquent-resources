@@ -1,6 +1,6 @@
 <?php
 
-namespace Jfadich\JsonResponder;
+namespace jfadich\JsonResponder\Traits;
 
 use Illuminate\Http\Response;
 
