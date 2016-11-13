@@ -1,6 +1,6 @@
 <?php
 
-namespace jfadich\Providers;
+namespace jfadich\JsonResponder\Providers;
 
 
 use Illuminate\Support\ServiceProvider;
