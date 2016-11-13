@@ -132,7 +132,8 @@ abstract class Transformer extends TransformerAbstract
     protected function getRelatedTransformer($model, $relation)
     {
         if (!method_exists($model, $relation) || !($relation = $model->$relation())) {
-            throw new InvalidModelRelation('Invalid relation');
+            $class = get_class($model);
+            throw new InvalidModelRelation("'$relation' is invalid relation for '$class'");
         }
 
         if (!($relation = $relation->getRelated()) instanceof Transformable) {
