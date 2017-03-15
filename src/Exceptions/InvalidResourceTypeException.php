@@ -2,7 +2,7 @@
 
 namespace jfadich\JsonResponder\Exceptions;
 
-class InvalidResourceType extends \Exception
+class InvalidResourceTypeException extends \Exception
 {
 
 }
