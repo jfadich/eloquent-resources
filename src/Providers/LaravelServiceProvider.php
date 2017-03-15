@@ -35,5 +35,6 @@ class LaravelServiceProvider extends ServiceProvider
             $namespaces = config('transformers.namespaces');
 
             return new TransformationManager($namespaces['models'], $namespaces['transformers'], $namespaces['presenters']);
-        });    }
+        });
+    }
 }

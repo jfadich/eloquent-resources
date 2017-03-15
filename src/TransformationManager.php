@@ -3,14 +3,13 @@
 namespace jfadich\JsonResponder;
 
 use jfadich\JsonResponder\Contracts\Transformable;
-use jfadich\JsonResponder\Exceptions\InvalidResourceType;
-use jfadich\JsonResponder\Transformers\Transformer;
+use jfadich\JsonResponder\Exceptions\InvalidResourceTypeException;
 
 class TransformationManager
 {
     protected $transformers = [];
 
-    protected $modelNamespace = 'App\\Models';
+    protected $modelNamespace = 'App';
 
     protected $transformerNamespace = 'App\\Transformers';
 
@@ -33,7 +32,7 @@ class TransformationManager
      *
      * @param $type
      * @return mixed|string
-     * @throws InvalidResourceType
+     * @throws InvalidResourceTypeException
      */
     public function getClassFromResourceType($type)
     {
@@ -45,7 +44,7 @@ class TransformationManager
         }
 
         if (!class_exists($class)) {
-            throw new InvalidResourceType('Invalid model type');
+            throw new InvalidResourceTypeException('Invalid model type');
         }
 
         return $class;

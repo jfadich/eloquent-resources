@@ -1,6 +1,6 @@
 <?php
 
-namespace jfadich\JsonResponder\Transformers;
+namespace jfadich\JsonResponder;
 
 use jfadich\JsonResponder\Exceptions\InvalidModelRelation;
 use jfadich\JsonResponder\Contracts\Transformable;
@@ -91,7 +91,7 @@ abstract class Transformer extends TransformerAbstract
      *
      * @param $model
      * @param $relation
-     * @return Collection|BaseModel|null
+     * @return Collection|Transformable|null
      */
     protected function resolveInclude($model, $relation)
     {
@@ -137,10 +137,20 @@ abstract class Transformer extends TransformerAbstract
         }
 
         if (!($relation = $relation->getRelated()) instanceof Transformable) {
-            throw new InvalidModelRelation('Model must be an instance of BaseModel');
+            throw new InvalidModelRelation('Model must be a Transformable instance');
         }
 
         return $relation->getTransformer();
+    }
+
+    /**
+     * Get an array of includes that are available, but should not be eager loaded with Eloquent.
+     *
+     * @return array
+     */
+    public function getLazyIncludes()
+    {
+        return $this->lazyIncludes;
     }
 
     /**

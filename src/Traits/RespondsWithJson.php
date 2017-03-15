@@ -37,21 +37,29 @@ trait RespondsWithJson
 
     /**
      * @param $message
+     * @param null $info
      * @return \Illuminate\Http\JsonResponse
      */
-    public function respondWithError($message)
+    public function respondWithError($message, $info = null)
     {
-        if ($this->statusCode === 200) {
+        if ($this->statusCode === Response::HTTP_OK) {
             $this->setStatusCode(Response::HTTP_BAD_REQUEST);
         }
 
-        return $this->makeResponse([
+        $data = [
             'error' => [
                 'message' => $message,
-                'error_code' => $this->getErrorCode(),
                 'http_status' => $this->getStatusCode()
             ]
-        ]);
+        ];
+
+        if($this->getErrorCode() !== -1)
+            $data['error']['error_code'] = $this->getErrorCode();
+
+        if($info !== null)
+            $data['error']['info'] = $info;
+
+        return $this->makeResponse($data);
     }
 
     /**
@@ -103,9 +111,9 @@ trait RespondsWithJson
      * @param string $message
      * @return \Illuminate\Http\JsonResponse
      */
-    public function respondUnprocessableEntity($message = 'Incomplete or invalid entity')
+    public function respondUnprocessableEntity($message = 'Incomplete or invalid entity', $errors = null)
     {
-        return $this->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY)->respondWithError($message);
+        return $this->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY)->respondWithError($message, $errors);
     }
 
     /**
