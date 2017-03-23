@@ -2,6 +2,7 @@
 
 namespace jfadich\JsonResponder\Traits;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
 /**
@@ -46,20 +47,7 @@ trait RespondsWithJson
             $this->setStatusCode(Response::HTTP_BAD_REQUEST);
         }
 
-        $data = [
-            'error' => [
-                'message' => $message,
-                'http_status' => $this->getStatusCode()
-            ]
-        ];
-
-        if($this->getErrorCode() !== -1)
-            $data['error']['error_code'] = $this->getErrorCode();
-
-        if($info !== null)
-            $data['error']['info'] = $info;
-
-        return $this->makeResponse($data);
+        return $this->makeResponse($this->formatErrorMessage($message, $info));
     }
 
     /**
@@ -198,15 +186,31 @@ trait RespondsWithJson
         return $this;
     }
 
+    protected function formatErrorMessage($message, $info = null)
+    {
+        $data =  [
+                'message' => $message,
+                'http_status' => $this->getStatusCode()
+        ];
+
+        if($this->getErrorCode() !== -1)
+            $data['error_code'] = $this->getErrorCode();
+
+        if($info !== null)
+            $data['error']['info'] = $info;
+
+        return $data;
+    }
+
     /**
      * Generate a response object with the given data and set the content-type to json
      *
      * @param $data
      * @param array $headers
-     * @return Response
+     * @return JsonResponse
      */
     protected function makeResponse($data, $headers = [])
     {
-        return response($data, $this->getStatusCode(), $headers)->header('Content-Type', 'application/json');
+        return response($data, $this->getStatusCode(), $headers)->json($data);
     }
 }
