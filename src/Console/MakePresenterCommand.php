@@ -1,6 +1,6 @@
 <?php
 
-namespace jfadich\JsonResponder\Console\Commands;
+namespace jfadich\JsonResponder\Console;
 
 use jfadich\JsonResponder\Presenter;
 

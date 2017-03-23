@@ -4,8 +4,8 @@ namespace jfadich\JsonResponder\Providers;
 
 
 use Illuminate\Support\ServiceProvider;
-use jfadich\JsonResponder\Console\Commands\MakePresenterCommand;
-use jfadich\JsonResponder\Console\Commands\MakeTransformerCommand;
+use jfadich\JsonResponder\Console\MakePresenterCommand;
+use jfadich\JsonResponder\Console\MakeTransformerCommand;
 use jfadich\JsonResponder\TransformationManager;
 
 class LaravelServiceProvider extends ServiceProvider
