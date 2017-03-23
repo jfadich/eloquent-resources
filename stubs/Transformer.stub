@@ -1,0 +1,20 @@
+<?php
+
+namespace DummyNamespace;
+
+DummyImport
+class DummyClass extends Transformer
+{
+    /**
+     * Return an array of data to be returned from the API
+     *
+     * @param DummyModel
+     * @return array
+     */
+    public function transform(DummyModel)
+    {
+        return [
+            //
+        ];
+    }
+}

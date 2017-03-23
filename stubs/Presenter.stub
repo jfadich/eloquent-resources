@@ -1,0 +1,9 @@
+<?php
+
+namespace DummyNamespace;
+
+DummyImport
+class DummyClass extends Presenter
+{
+    //
+}
