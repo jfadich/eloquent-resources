@@ -57,9 +57,8 @@ trait Presentable
 
     protected function resolvePresenterName()
     {
-        $modelNamespace =  property_exists($this, 'modelNamespace') ? $this->modelNamespace : 'App';
-        $presenterNamespace = property_exists($this, 'presenterNamespace') ? $this->presenterNamespace : 'App\\Presenters';
+        $namespaces = config('transformers.namespaces');
 
-        return str_replace($modelNamespace, $presenterNamespace, get_class($this)) . 'Presenter';
+        return str_replace($namespaces['models'], $namespaces['presenters'], get_class($this)) . 'Presenter';
     }
 }

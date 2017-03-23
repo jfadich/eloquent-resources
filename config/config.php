@@ -6,4 +6,10 @@ return [
         'transformers' => 'App\\Transformers',
         'presenters' => 'App\\Presenters'
     ],
+
+    'countName' => 'limit',
+
+    'defaultCount' => 25,
+
+    'includesName' => 'with'
 ];

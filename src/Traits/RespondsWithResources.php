@@ -21,25 +21,33 @@ trait RespondsWithResources
     use RespondsWithJson;
 
     /**
+     * Fractal Manager to do the transformations
+     *
      * @var Fractal
      */
     protected $fractal;
 
+    protected $request;
+
+    /**
+     * Array of related objects that should be included in the request
+     *
+     * @var array
+     */
     protected $includes = [];
 
     /**
      * @param Fractal $fractal
      * @param Request $request
      */
-    public function bootRespondsWithResources(Fractal $fractal, Request $request = null)
+    public function bootRespondsWithResources(Fractal $fractal, Request $request)
     {
-        if($request !== null) {
-            $this->request = $request;
-            if($request->has('with'))
-                $this->setIncludes($request->get('with'));
-        }
-
+        $this->request = $request;
         $this->fractal = $fractal;
+        $includesName = config('transformers.includesName');
+
+        if($request->has($includesName))
+            $this->setIncludes($request->get($includesName));
     }
 
     /**
@@ -49,7 +57,7 @@ trait RespondsWithResources
      * @param array $meta
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function respondWithItem(Transformable $item, $meta = [])
+    public function respondWithItem(Transformable $item, $meta = [])
     {
         $resource = new Item($item, $item->getTransformer());
 
@@ -74,7 +82,7 @@ trait RespondsWithResources
      * @return \Illuminate\Http\JsonResponse
      * @throws \Exception
      */
-    protected function respondWithCollection($collection, $callback = null, $meta = [])
+    public function respondWithCollection($collection, $callback = null, $meta = [])
     {
         // If a query builder instance is given set the eager loads and paginate the data.
         if ($collection instanceof Builder || $collection instanceof Relation) {
@@ -107,9 +115,7 @@ trait RespondsWithResources
 
         // Set the pagination details
         if ($collection instanceof LengthAwarePaginator) {
-            if(isset($this->request) && $this->request instanceof Request) {
-                $collection->appends($this->request->except('page'));
-            }
+            $collection->appends($this->request->except('page'));
 
             $resource->setPaginator(new IlluminatePaginatorAdapter($collection));
         }
@@ -124,9 +130,36 @@ trait RespondsWithResources
      * @param array $meta
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function respondCreated($item, $meta = [])
+    public function respondCreated($item, $meta = [])
     {
         return $this->setStatusCode(Response::HTTP_CREATED)->respondWithItem($item, $meta);
+    }
+
+    /**
+     * Get the per page count from the request, or the default
+     *
+     * @return int
+     */
+    public function getCount()
+    {
+        $config = config('transformers');
+
+        return $this->request->get($config['countName'], $config['defaultCount']);
+    }
+
+    public function setIncludes(array $includes = [])
+    {
+        $this->fractal->parseIncludes($includes);
+
+        $this->includes = $this->fractal->getRequestedIncludes();;
+    }
+
+    public function getIncludes($except = [])
+    {
+        if(empty($except))
+            return $this->includes;
+
+        return array_except($this->includes, $except);
     }
 
     /**
@@ -139,35 +172,5 @@ trait RespondsWithResources
     protected function buildFailedValidationResponse(Request $request, array $errors)
     {
         return $this->respondUnprocessableEntity('There was an error validating the request.', $errors);
-    }
-
-    /**
-     * Get the per page count from the request, or the default
-     *
-     * @return int
-     */
-    protected function getCount()
-    {
-        $count = $this->defaultCount ?? 25;
-
-        if(isset($this->request) && $this->request instanceof Request)
-            return $this->request->get('limit', $count);
-
-        return $count;
-    }
-
-    protected function setIncludes(array $includes = [])
-    {
-        $this->fractal->parseIncludes($includes);
-
-        $this->includes = $this->fractal->getRequestedIncludes();;
-    }
-
-    protected function getIncludes($except = [])
-    {
-        if(empty($except))
-            return $this->includes;
-
-        return array_except($this->includes, $except);
     }
 }
