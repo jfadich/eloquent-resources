@@ -52,7 +52,7 @@ abstract class GeneratorCommand extends LaravelGenerator
         $parentClass = explode('\\', $this->parentClass);
 
         $this->type = array_pop($parentClass);
-        $this->namespace = implode('\\', $parentClass);
+        $this->namespace = config('transformers.namespaces.'.strtolower($this->type).'s');
     }
 
     /**
