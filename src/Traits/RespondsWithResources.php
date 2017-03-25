@@ -1,6 +1,6 @@
 <?php
 
-namespace jfadich\Traits;
+namespace jfadich\JsonResponder\Traits;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use jfadich\JsonResponder\Contracts\Transformable;
 use jfadich\JsonResponder\Exceptions\MissingTransformerException;
-use jfadich\JsonResponder\Traits\RespondsWithJson;
 use jfadich\JsonResponder\Transformer;
 use League\Fractal\Manager as Fractal;
 use League\Fractal\Pagination\IlluminatePaginatorAdapter;
