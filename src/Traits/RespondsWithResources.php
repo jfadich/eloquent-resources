@@ -97,7 +97,8 @@ trait RespondsWithResources
 
             /** @var Transformer $callback */
             $callback = $model->getTransformer();
-            $collection = $collection->with($this->getIncludes($callback->getLazyIncludes()))->paginate($this->getCount());
+            $includes = $this->getIncludes($callback->getLazyIncludes());
+            $collection = $collection->with($this->getEagerLoad($includes))->paginate($this->getCount());
         }
 
         if($callback === null) {
@@ -146,11 +147,31 @@ trait RespondsWithResources
         return $this->request->get($config['countName'], $config['defaultCount']);
     }
 
-    public function setIncludes(array $includes = [])
+    public function setIncludes($includes = '')
     {
         $this->fractal->parseIncludes($includes);
 
-        $this->includes = $this->fractal->getRequestedIncludes();;
+        $this->includes = $this->fractal->getRequestedIncludes();
+    }
+
+    protected function getEagerLoad($includes = [])
+    {
+        $eager = [];
+
+        foreach($includes as $include) {
+            $order = $this->fractal->getIncludeParams($include);
+            $order = $order['order'] ?? null;
+
+            if (is_array($order) && count($order) === 2 && in_array($order[1], ['desc', 'asc'])) {
+                $eager[$include] = function($query) use($order) {
+                    return $query->orderBy($order[0], $order[1]);
+                };
+            } else {
+                $eager[] = $include;
+            }
+        }
+
+        return $eager;
     }
 
     public function getIncludes($except = [])

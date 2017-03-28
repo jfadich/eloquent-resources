@@ -53,7 +53,7 @@ abstract class Transformer extends TransformerAbstract
      * @param Transformer $transformer
      * @return array
      */
-    protected function parseParams(ParamBag $params = null, Transformer $transformer)
+    public function parseParams(ParamBag $params = null, Transformer $transformer)
     {
         $result = ['limit' => null, 'order' => null];
 
@@ -197,10 +197,6 @@ abstract class Transformer extends TransformerAbstract
         if ($data instanceof Collection) {
             $params = $this->parseParams($arguments[1], $transformer);
 
-            if($params['order'] !== null) {
-                list($orderCol, $orderBy) = $params['order'];
-                $data = $orderBy === 'asc' ? $data->sortBy($orderCol) : $data->sortByDesc($orderCol);
-            }
             if($params['limit'] !== null) {
                 $data = $data->take($params['limit']);
             }
