@@ -2,7 +2,7 @@
 
 namespace jfadich\JsonResponder\Console;
 
-use jfadich\JsonResponder\Presenter;
+use Illuminate\Filesystem\Filesystem;
 
 /**
  * Command to generate a new presenter class
@@ -24,9 +24,14 @@ class MakePresenterCommand extends GeneratorCommand
     protected $description = 'Create a new Presenter class';
 
     /**
-     * Base class the the generated class extends.
+     * Set the base class then call the parent
      *
-     * @var string
+     * @param Filesystem $files
      */
-    protected $parentClass = Presenter::class;
+    public function __construct(Filesystem $files)
+    {
+        $this->parentClass = config('transformers.basePresenter');
+
+        parent::__construct($files);
+    }
 }

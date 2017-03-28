@@ -2,8 +2,7 @@
 
 namespace jfadich\JsonResponder\Console;
 
-use Illuminate\Database\Eloquent\Model;
-use jfadich\JsonResponder\Transformer;
+use Illuminate\Filesystem\Filesystem;
 use Symfony\Component\Console\Input\InputOption;
 
 /**
@@ -30,12 +29,16 @@ class MakeTransformerCommand extends GeneratorCommand
     protected $description = 'Create a new transformer class';
 
     /**
-     * Base class the the generated class extends.
+     * Set the base class then call the parent
      *
-     * @var string
+     * @param Filesystem $files
      */
-    protected $parentClass = Transformer::class;
+    public function __construct(Filesystem $files)
+    {
+        $this->parentClass = config('transformers.baseTransformer');
 
+        parent::__construct($files);
+    }
     /**
      * Add the transformed model to the constructor and imports
      *
@@ -56,7 +59,7 @@ class MakeTransformerCommand extends GeneratorCommand
     protected function replaceModel(&$stub)
     {
         if (!$model = $this->parseModel())
-            $model = ['class' => 'Model', 'namespace' => Model::class];
+            $model = ['class' => 'Model', 'namespace' => 'Illuminate\Database\Eloquent'];
 
         $this->imports[] = $model['namespace'] . '\\' . $model['class'];
 
@@ -92,7 +95,7 @@ class MakeTransformerCommand extends GeneratorCommand
             return null;
 
         if (!starts_with($model, config('transformers.namespaces.models')))
-            $model = config('transformers.namespaces.models') . $model;
+            $model = config('transformers.namespaces.models') .'\\'. $model;
 
         $namespace = explode('\\', $model);
 

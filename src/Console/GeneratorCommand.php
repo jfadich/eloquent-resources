@@ -125,7 +125,7 @@ abstract class GeneratorCommand extends LaravelGenerator
      */
     protected function replaceImports(&$stub, $name)
     {
-        if ($this->parentClass !== null && count(explode('\\', $name)) > count(explode('\\', $this->parentClass)))
+        if ($this->shouldImportParent($name))
             array_unshift($this->imports, $this->parentClass);
 
         $importString = '';
@@ -160,5 +160,16 @@ abstract class GeneratorCommand extends LaravelGenerator
     protected function getStub()
     {
         return base_path("vendor/jfadich/json-responder/stubs/{$this->type}.stub");
+    }
+
+    private function shouldImportParent($childClass)
+    {
+        if($this->parentClass === null)
+            return false;
+
+        $childDepth  = count(explode('\\', $childClass));
+        $parentDepth = count(explode('\\', $this->parentClass));
+
+        return $childDepth > $parentDepth || !starts_with($this->parentClass, $this->namespace);
     }
 }

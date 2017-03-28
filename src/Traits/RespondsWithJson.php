@@ -211,6 +211,6 @@ trait RespondsWithJson
      */
     protected function makeResponse($data, $headers = [])
     {
-        return response($data, $this->getStatusCode(), $headers)->json($data);
+        return response($data, $this->getStatusCode(), $headers)->header('Content-Type', 'application/json');
     }
 }

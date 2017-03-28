@@ -160,16 +160,4 @@ trait RespondsWithResources
 
         return array_except($this->includes, $except);
     }
-
-    /**
-     * Create the response for when a request fails validation.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  array  $errors
-     * @return \Illuminate\Http\JsonResponse
-     */
-    protected function buildFailedValidationResponse(Request $request, array $errors)
-    {
-        return $this->respondUnprocessableEntity('There was an error validating the request.', $errors);
-    }
 }

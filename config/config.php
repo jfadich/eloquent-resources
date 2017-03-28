@@ -11,5 +11,9 @@ return [
 
     'defaultCount' => 25,
 
-    'includesName' => 'with'
+    'includesName' => 'with',
+
+    'baseTransformer' => jfadich\JsonResponder\Transformer::class,
+
+    'basePresenter' => jfadich\JsonResponder\Presenter::class
 ];
