@@ -20,18 +20,23 @@ abstract class Transformer extends TransformerAbstract
      *
      * @var array ['api_name' => 'sql_field']
      */
-    protected $orderColumns = [
-        'created' => 'created_at',
-        'updated' => 'updated_at'
-    ];
+    protected $orderColumns = [];
 
     /**
      * Available includes that should not be passed to Eloquent for SQL eager loading.
      *
      * @var array
      */
-    protected $lazyIncludes = [
+    protected $lazyIncludes = [];
 
+    /**
+     * Default sort columns available for all models.
+     *
+     * @var array ['api_name' => 'sql_field']
+     */
+    private $defaultOrderColumns = [
+        'created' => 'created_at',
+        'updated' => 'updated_at'
     ];
 
     /**
@@ -45,9 +50,10 @@ abstract class Transformer extends TransformerAbstract
      * Parse the limit and order parameters
      *
      * @param ParamBag $params
+     * @param Transformer $transformer
      * @return array
      */
-    protected function parseParams(ParamBag $params = null)
+    protected function parseParams(ParamBag $params = null, Transformer $transformer)
     {
         $result = ['limit' => null, 'order' => null];
 
@@ -56,22 +62,32 @@ abstract class Transformer extends TransformerAbstract
         }
 
         $order = $params->get('order');
-        $limit = $params->get('limit');
+        $limit = $params->get(config('transformers.countName'));
 
         if (is_numeric($limit[0])) {
             $result['limit'] = min($limit[0], $this->requestLimit);
         }
 
+        $availableSortColumns = $this->resolveOrderColumns($transformer);
+
         if (is_array($order) && count($order) === 2) {
-            if (in_array($order[0], array_keys($this->orderColumns)) && in_array($order[1],
-                    ['desc', 'asc'])
-            ) {
-                $order[0] = $this->orderColumns[$order[0]];
+            if (in_array($order[0], array_keys($availableSortColumns)) && in_array($order[1], ['desc', 'asc'])) {
+                $order[0] = $availableSortColumns[$order[0]];
                 $result['order'] = $order;
             }
         }
 
         return $result;
+    }
+
+    public function getOrderColumns()
+    {
+        return $this->orderColumns;
+    }
+
+    protected function resolveOrderColumns(Transformer $transformer)
+    {
+        return array_merge($this->defaultOrderColumns, $transformer->getOrderColumns());
     }
 
     /**
@@ -110,7 +126,7 @@ abstract class Transformer extends TransformerAbstract
      * @param $method
      * @return bool|string
      */
-    protected function resolveRelation($method)
+    protected function resolveRelationName($method)
     {
         $relation = camel_case(str_replace('include', '', $method));
 
@@ -131,16 +147,16 @@ abstract class Transformer extends TransformerAbstract
      */
     protected function getRelatedTransformer($model, $relation)
     {
-        if (!method_exists($model, $relation) || !($relation = $model->$relation())) {
+        if (!method_exists($model, $relation) || !($relationship = $model->$relation())) {
             $class = get_class($model);
             throw new InvalidModelRelation("'$relation' is invalid relation for '$class'");
         }
 
-        if (!($relation = $relation->getRelated()) instanceof Transformable) {
+        if (!($related = $relationship->getRelated()) instanceof Transformable) {
             throw new InvalidModelRelation('Model must be a Transformable instance');
         }
 
-        return $relation->getTransformer();
+        return $related->getTransformer();
     }
 
     /**
@@ -164,20 +180,31 @@ abstract class Transformer extends TransformerAbstract
      */
     public function __call($method, $arguments)
     {
-        $relation = $this->resolveRelation($method);
+        $relation = $this->resolveRelationName($method);
 
         if (!$relation || !($model = $arguments[0]) instanceof Transformable) {
             throw new BadMethodCallException('Invalid include requested on transformer');
         }
 
         $data = $this->resolveInclude($model, $relation);
-        $transformer = $this->getRelatedTransformer($model, $relation);
 
         if ($data === null) {
             return null;
         }
 
+        $transformer = $this->getRelatedTransformer($model, $relation);
+
         if ($data instanceof Collection) {
+            $params = $this->parseParams($arguments[1], $transformer);
+
+            if($params['order'] !== null) {
+                list($orderCol, $orderBy) = $params['order'];
+                $data = $orderBy === 'asc' ? $data->sortBy($orderCol) : $data->sortByDesc($orderCol);
+            }
+            if($params['limit'] !== null) {
+                $data = $data->take($params['limit']);
+            }
+
             return $this->collection($data, $transformer);
         }
 
