@@ -54,7 +54,7 @@ trait RespondsWithResources
      *
      * @param Transformable $item
      * @param array $meta
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\Response
      */
     public function respondWithItem(Transformable $item, $meta = [])
     {
@@ -78,7 +78,7 @@ trait RespondsWithResources
      * @param $collection
      * @param $callback
      * @param array $meta
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\Response
      * @throws \Exception
      */
     public function respondWithCollection($collection, $callback = null, $meta = [])
@@ -128,7 +128,7 @@ trait RespondsWithResources
     /**
      * @param $item
      * @param array $meta
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\Response
      */
     public function respondCreated($item, $meta = [])
     {

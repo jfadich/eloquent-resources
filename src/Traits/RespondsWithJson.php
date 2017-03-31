@@ -2,7 +2,6 @@
 
 namespace jfadich\JsonResponder\Traits;
 
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
 /**
@@ -29,7 +28,7 @@ trait RespondsWithJson
     /**
      * @param array $array
      * @param array $headers
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\Response
      */
     public function respondWithArray(array $array, array $headers = [])
     {
@@ -39,7 +38,7 @@ trait RespondsWithJson
     /**
      * @param $message
      * @param null $info
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\Response
      */
     public function respondWithError($message, $info = null)
     {
@@ -52,7 +51,7 @@ trait RespondsWithJson
 
     /**
      * @param string $message
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\Response
      */
     public function respondNotFound($message = 'Resource not found')
     {
@@ -61,7 +60,7 @@ trait RespondsWithJson
 
     /**
      * @param string $message
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\Response
      */
     public function respondUnauthorized($message = 'You are not authorized')
     {
@@ -70,7 +69,7 @@ trait RespondsWithJson
 
     /**
      * @param string $message
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\Response
      */
     public function respondForbidden($message = 'You are forbidden')
     {
@@ -79,7 +78,7 @@ trait RespondsWithJson
 
     /**
      * @param string $message
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\Response
      */
     public function respondInternalError($message = 'Internal Error')
     {
@@ -88,7 +87,7 @@ trait RespondsWithJson
 
     /**
      * @param string $message
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\Response
      */
     public function respondBadRequest($message = 'Bad Request')
     {
@@ -97,7 +96,7 @@ trait RespondsWithJson
 
     /**
      * @param string $message
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\Response
      */
     public function respondUnprocessableEntity($message = 'Incomplete or invalid entity', $errors = null)
     {
@@ -106,7 +105,7 @@ trait RespondsWithJson
 
     /**
      * @param array $headers
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\Response
      */
     public function respondNoContent($headers = [])
     {
@@ -117,7 +116,7 @@ trait RespondsWithJson
      * Alias for respondNoContent()
      *
      * @param array $headers
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\Response
      */
     public function respondDeleted($headers = [])
     {
@@ -127,7 +126,7 @@ trait RespondsWithJson
     /**
      * 
      * @param $message
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\Response
      */
     public function respondConflict($message)
     {
@@ -207,7 +206,7 @@ trait RespondsWithJson
      *
      * @param $data
      * @param array $headers
-     * @return JsonResponse
+     * @return Response
      */
     protected function makeResponse($data, $headers = [])
     {
