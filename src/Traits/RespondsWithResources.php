@@ -102,12 +102,13 @@ trait RespondsWithResources
         }
 
         if($callback === null) {
-            throw new \Exception('Collection callback not provided.');
+            throw new MissingTransformerException('Collection callback not provided.');
         }
 
         $resource = new Collection($collection->all(), $callback);
 
         if (!empty($meta)) {
+
             foreach ($meta as $k => $v) {
                 $resource->setMetaValue($k, $v);
             }
