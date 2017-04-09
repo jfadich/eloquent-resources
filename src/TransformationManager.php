@@ -30,13 +30,13 @@ class TransformationManager
     /**
      * Reverse of getResourceType. Return the Class name from the given type.
      *
-     * @param $type
+     * @param $typeString
      * @return mixed|string
      * @throws InvalidResourceTypeException
      */
-    public function getClassFromResourceType($type)
+    public function getClassFromResourceType($typeString)
     {
-        $type = explode('-', $type);
+        $type = explode('-', $typeString);
         $class = $this->modelNamespace;
 
         foreach ($type as $namespace) {
@@ -44,7 +44,7 @@ class TransformationManager
         }
 
         if (!class_exists($class)) {
-            throw new InvalidResourceTypeException('Invalid model type');
+            throw new InvalidResourceTypeException("Invalid model type: {$typeString}");
         }
 
         return $class;
@@ -86,7 +86,7 @@ class TransformationManager
         $transformer = str_replace($this->modelNamespace, $this->transformerNamespace, $class) . 'Transformer';
 
         if (class_exists($transformer)) {
-            $this->transformers[$type] = app($transformer);
+            $this->transformers[$type] = new $transformer;
         } else {
             $this->transformers[$type] = function ($model) use($type) {
                 return [
