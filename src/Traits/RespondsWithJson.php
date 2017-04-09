@@ -203,12 +203,14 @@ trait RespondsWithJson
     protected function formatErrorMessage($message, $info = null)
     {
         $data =  [
+            'error' => [
                 'message' => $message,
-                'http_status' => $this->getStatusCode()
+            ],
+            'http_status' => $this->getStatusCode()
         ];
 
         if($this->getErrorCode() !== -1)
-            $data['error_code'] = $this->getErrorCode();
+            $data['error']['code'] = $this->getErrorCode();
 
         if($info !== null)
             $data['error']['info'] = $info;
