@@ -62,7 +62,7 @@ abstract class Transformer extends TransformerAbstract
         }
 
         $order = $params->get('order');
-        $limit = $params->get(config('transformers.countName'));
+        $limit = $params->get(config('transformers.parameters.count.name'));
 
         if (is_numeric($limit[0])) {
             $result['limit'] = min($limit[0], $this->requestLimit);

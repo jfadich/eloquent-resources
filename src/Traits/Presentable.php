@@ -2,20 +2,11 @@
 
 namespace jfadich\JsonResponder\Traits;
 
-use jfadich\JsonResponder\Presenter;
-
 /**
  * Trait to easily add a presenter to a model
  */
 trait Presentable
 {
-    /**
-     * View presenter instance
-     *
-     * @var mixed
-     */
-    protected $presenter;
-
     /**
      * If a property is provided, presenter will parse the property on the model
      * using any additional arguments as options.
@@ -42,12 +33,12 @@ trait Presentable
      */
     public function getPresenter()
     {
-        if ($this->presenter === null)
+        if (!isset($this->presenter) || $this->presenter === null)
             $this->presenter = $this->resolvePresenterName();
 
         if (is_string($this->presenter)) {
             if (!class_exists($this->presenter))
-                $this->presenter = Presenter::class;
+                $this->presenter = config('transformers.classes.presenter');
 
             $this->presenter = new $this->presenter($this);
         }

@@ -30,7 +30,7 @@ class MakePresenterCommand extends GeneratorCommand
      */
     public function __construct(Filesystem $files)
     {
-        $this->parentClass = config('transformers.basePresenter');
+        $this->parentClass = config('transformers.classes.presenter');
 
         parent::__construct($files);
     }

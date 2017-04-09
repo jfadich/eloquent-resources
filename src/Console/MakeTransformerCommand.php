@@ -35,7 +35,7 @@ class MakeTransformerCommand extends GeneratorCommand
      */
     public function __construct(Filesystem $files)
     {
-        $this->parentClass = config('transformers.baseTransformer');
+        $this->parentClass = config('transformers.classes.transformer');
 
         parent::__construct($files);
     }

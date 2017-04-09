@@ -43,7 +43,7 @@ trait RespondsWithResources
     {
         $this->request = $request;
         $this->fractal = $fractal;
-        $includesName = config('transformers.includesName');
+        $includesName = config('transformers.parameters.includes.name');
 
         if($request->has($includesName))
             $this->setIncludes($request->get($includesName));
@@ -143,9 +143,9 @@ trait RespondsWithResources
      */
     public function getCount()
     {
-        $config = config('transformers');
+        $config = config('transformers.parameters.count');
 
-        return $this->request->get($config['countName'], $config['defaultCount']);
+        return $this->request->get($config['name'], $config['default']);
     }
 
     public function setIncludes($includes = '')
