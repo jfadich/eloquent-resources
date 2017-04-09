@@ -43,6 +43,7 @@ trait RespondsWithResources
     {
         $this->request = $request;
         $this->fractal = $fractal;
+        $this->fractal->setRecursionLimit(config('transformers.parameters.includes.max'));
         $includesName = config('transformers.parameters.includes.name');
 
         if($request->has($includesName))

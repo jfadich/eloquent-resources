@@ -21,7 +21,8 @@ return [
     | Query Parameters
     |--------------------------------------------------------------------------
     |
-    | This option controls the parameter name and default value.
+    | This option controls the parameter name and default value. Includes max
+    | sets the recursion limit on fractal
     |
     */
     'parameters'    => [
@@ -31,7 +32,8 @@ return [
             'max'       => 1000
         ],
         'includes'      => [
-            'name'      => 'with'
+            'name'      => 'with',
+            'max'       => 5
         ]
     ],
 
