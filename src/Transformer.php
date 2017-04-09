@@ -40,13 +40,6 @@ abstract class Transformer extends TransformerAbstract
     ];
 
     /**
-     * Max number of resources that can be requested
-     *
-     * @var int
-     */
-    protected $requestLimit = 1000;
-
-    /**
      * Parse the limit and order parameters
      *
      * @param ParamBag $params
@@ -65,7 +58,7 @@ abstract class Transformer extends TransformerAbstract
         $limit = $params->get(config('transformers.parameters.count.name'));
 
         if (is_numeric($limit[0])) {
-            $result['limit'] = min($limit[0], $this->requestLimit);
+            $result['limit'] = min($limit[0], config('transformers.parameters.count.max'));
         }
 
         $availableSortColumns = $this->resolveOrderColumns($transformer);

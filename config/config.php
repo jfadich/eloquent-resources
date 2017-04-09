@@ -27,7 +27,8 @@ return [
     'parameters'    => [
         'count' => [
             'name'      => 'limit',
-            'default'   => 25
+            'default'   => 25,
+            'max'       => 1000
         ],
         'includes'      => [
             'name'      => 'with'
