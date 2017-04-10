@@ -9,8 +9,6 @@ php:
   - 7.0
   # aliased to a recent 7.x version
   - 7.1
-  # aliased to a recent hhvm version
-  - hhvm
 
 before_script:
   - travis_retry composer self-update
