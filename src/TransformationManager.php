@@ -7,14 +7,32 @@ use jfadich\JsonResponder\Exceptions\InvalidResourceTypeException;
 
 class TransformationManager
 {
+    /**
+     * @var array
+     */
     protected $transformers = [];
 
+    /**
+     * @var string
+     */
     protected $modelNamespace = 'App';
 
+    /**
+     * @var string
+     */
     protected $transformerNamespace = 'App\\Transformers';
 
+    /**
+     * @var string
+     */
     protected $presentersNamespace = 'App\\Presenters';
 
+    /**
+     * TransformationManager constructor.
+     * @param string $model
+     * @param string $transformer
+     * @param string $presenter
+     */
     public function __construct($model = null, $transformer = null, $presenter = null)
     {
         if($model !== null)

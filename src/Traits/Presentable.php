@@ -46,6 +46,11 @@ trait Presentable
         return $this->presenter;
     }
 
+    /**
+     * Get the name of the presenter class from the model namespace
+     *
+     * @return string
+     */
     protected function resolvePresenterName()
     {
         $namespaces = config('transformers.namespaces');

@@ -149,6 +149,11 @@ trait RespondsWithResources
         return $this->request->get($config['name'], $config['default']);
     }
 
+    /**
+     * Parse the include string and save the desired includes.
+     *
+     * @param string $includes
+     */
     public function setIncludes($includes = '')
     {
         $this->fractal->parseIncludes($includes);
@@ -156,6 +161,12 @@ trait RespondsWithResources
         $this->includes = $this->fractal->getRequestedIncludes();
     }
 
+    /**
+     * Get the eagerload array. If sort/order params are provided apply them to the eagerload constraint
+     *
+     * @param array $includes
+     * @return array
+     */
     protected function getEagerLoad($includes = [])
     {
         $eager = [];
@@ -176,6 +187,12 @@ trait RespondsWithResources
         return $eager;
     }
 
+    /**
+     * Get the array of requested includes
+     *
+     * @param array $except
+     * @return array
+     */
     public function getIncludes($except = [])
     {
         if(empty($except))

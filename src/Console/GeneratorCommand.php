@@ -162,6 +162,12 @@ abstract class GeneratorCommand extends LaravelGenerator
         return base_path("vendor/jfadich/json-responder/stubs/{$this->type}.stub");
     }
 
+    /**
+     * Determine if the parent is in the same namespace and the child and if it needs to be imported or not.
+     *
+     * @param $childClass
+     * @return bool
+     */
     private function shouldImportParent($childClass)
     {
         if($this->parentClass === null)

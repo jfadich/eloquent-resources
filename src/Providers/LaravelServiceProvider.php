@@ -20,6 +20,13 @@ class LaravelServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../../config/config.php' => config_path('transformers.php'),
         ]);
+
+        if($this->app->runningInConsole()) {
+            $this->commands([
+                MakePresenterCommand::class,
+                MakeTransformerCommand::class
+            ]);
+        }
     }
 
     /**
@@ -38,10 +45,5 @@ class LaravelServiceProvider extends ServiceProvider
 
             return new TransformationManager($namespaces['models'], $namespaces['transformers'], $namespaces['presenters']);
         });
-
-        $this->commands([
-            MakePresenterCommand::class,
-            MakeTransformerCommand::class
-        ]);
     }
 }

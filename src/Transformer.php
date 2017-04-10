@@ -73,11 +73,22 @@ abstract class Transformer extends TransformerAbstract
         return $result;
     }
 
+    /**
+     * Get the array of available columns to be user for orderBy
+     *
+     * @return array
+     */
     public function getOrderColumns()
     {
         return $this->orderColumns;
     }
 
+    /**
+     * Get all order columns, including the defaults
+     *
+     * @param Transformer $transformer
+     * @return array
+     */
     protected function resolveOrderColumns(Transformer $transformer)
     {
         return array_merge($this->defaultOrderColumns, $transformer->getOrderColumns());
