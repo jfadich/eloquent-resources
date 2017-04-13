@@ -1,9 +1,9 @@
 <?php
 
-namespace jfadich\JsonResponder\Http;
+namespace jfadich\EloquentResources\Http;
 
 use Illuminate\Routing\Controller as BaseController;
-use jfadich\JsonResponder\Traits\RespondsWithResources;
+use jfadich\EloquentResources\Traits\RespondsWithResources;
 use League\Fractal\Manager as Fractal;
 use Illuminate\Http\Request;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace jfadich\JsonResponder\Contracts;
+namespace jfadich\EloquentResources\Contracts;
 
 interface Transformable
 {

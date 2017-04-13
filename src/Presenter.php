@@ -1,8 +1,8 @@
 <?php
 
-namespace jfadich\JsonResponder;
+namespace jfadich\EloquentResources;
 
-use jfadich\JsonResponder\Contracts\Presentable;
+use jfadich\EloquentResources\Contracts\Presentable;
 
 /**
  * Base presenter class to manage calling property presenter methods on the model

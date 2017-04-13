@@ -1,6 +1,6 @@
 <?php
 
-use jfadich\JsonResponder\TransformationManager;
+use jfadich\EloquentResources\TransformationManager;
 use PHPUnit\Framework\TestCase;
 
 class TransformationManagerTest extends TestCase
@@ -36,7 +36,7 @@ class TransformationManagerTest extends TestCase
     {
         $manager = new TransformationManager;
 
-        $this->expectException(\jfadich\JsonResponder\Exceptions\InvalidResourceTypeException::class);
+        $this->expectException(\jfadich\EloquentResources\Exceptions\InvalidResourceTypeException::class);
 
         $manager->getClassFromResourceType('not-a-resource');
     }

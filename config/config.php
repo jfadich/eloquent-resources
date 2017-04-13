@@ -48,7 +48,8 @@ return [
     |
     */
     'classes'       => [
-        'transformer'   => jfadich\JsonResponder\Transformer::class,
-        'presenter'     => jfadich\JsonResponder\Presenter::class
+        'transformer'   => jfadich\EloquentResources\Transformer::class,
+        'presenter'     => jfadich\EloquentResources\Presenter::class,
+        'model'         => jfadich\EloquentResources\TransformableModel::class
     ],
 ];

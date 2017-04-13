@@ -1,10 +1,10 @@
 <?php
 
-namespace jfadich\JsonResponder\Console;
+namespace jfadich\EloquentResources\Console;
 
 use Illuminate\Console\GeneratorCommand as LaravelGenerator;
 use Illuminate\Filesystem\Filesystem;
-use jfadich\JsonResponder\Exceptions\GeneratorException;
+use jfadich\EloquentResources\Exceptions\GeneratorException;
 
 abstract class GeneratorCommand extends LaravelGenerator
 {

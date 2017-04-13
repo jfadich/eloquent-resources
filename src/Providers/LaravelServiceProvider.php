@@ -1,12 +1,12 @@
 <?php
 
-namespace jfadich\JsonResponder\Providers;
+namespace jfadich\EloquentResources\Providers;
 
 
 use Illuminate\Support\ServiceProvider;
-use jfadich\JsonResponder\Console\MakePresenterCommand;
-use jfadich\JsonResponder\Console\MakeTransformerCommand;
-use jfadich\JsonResponder\TransformationManager;
+use jfadich\EloquentResources\Console\MakePresenterCommand;
+use jfadich\EloquentResources\Console\MakeTransformerCommand;
+use jfadich\EloquentResources\TransformationManager;
 
 class LaravelServiceProvider extends ServiceProvider
 {

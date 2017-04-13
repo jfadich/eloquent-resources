@@ -1,11 +1,11 @@
 <?php
 
-namespace jfadich\JsonResponder\Exceptions;
+namespace jfadich\EloquentResources\Exceptions;
 
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use jfadich\JsonResponder\Traits\RespondsWithJson;
+use jfadich\EloquentResources\Traits\RespondsWithJson;
 use Symfony\Component\Debug\ExceptionHandler;
 use Illuminate\Http\Response;
 use Exception;

@@ -1,6 +1,6 @@
 <?php
 
-namespace jfadich\JsonResponder;
+namespace jfadich\EloquentResources;
 
 use ReflectionClass;
 

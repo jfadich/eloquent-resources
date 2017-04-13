@@ -1,6 +1,6 @@
 <?php
 
-namespace jfadich\JsonResponder\Traits;
+namespace jfadich\EloquentResources\Traits;
 
 /**
  * Trait to easily add a presenter to a model

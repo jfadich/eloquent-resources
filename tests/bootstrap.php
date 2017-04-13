@@ -2,7 +2,7 @@
 
 namespace {
 
-    use jfadich\JsonResponder\TransformationManager;
+    use jfadich\EloquentResources\TransformationManager;
 
     require __DIR__ . '/../vendor/autoload.php';
 
@@ -43,8 +43,8 @@ namespace App {
 
     use App\Nested\NestedModel;
     use Illuminate\Database\Eloquent\Model;
-    use jfadich\JsonResponder\Contracts\Transformable as TransformableContract;
-    use jfadich\JsonResponder\Traits\Transformable;
+    use jfadich\EloquentResources\Contracts\Transformable as TransformableContract;
+    use jfadich\EloquentResources\Traits\Transformable;
 
 
     class TestModel extends Model implements TransformableContract{
@@ -61,8 +61,8 @@ namespace App {
 namespace App\Nested {
 
     use Illuminate\Database\Eloquent\Model;
-    use jfadich\JsonResponder\Contracts\Transformable as TransformableContract;
-    use jfadich\JsonResponder\Traits\Transformable;
+    use jfadich\EloquentResources\Contracts\Transformable as TransformableContract;
+    use jfadich\EloquentResources\Traits\Transformable;
 
     class NestedModel extends Model implements TransformableContract{
         use Transformable;
@@ -75,7 +75,7 @@ namespace App\Nested {
 }
 
 namespace App\Transformers {
-    use jfadich\JsonResponder\Transformer;
+    use jfadich\EloquentResources\Transformer;
 
     class TestModelTransformer extends Transformer {
         protected $availableIncludes = ['nestedModel'];
@@ -83,7 +83,7 @@ namespace App\Transformers {
 }
 
 namespace App\Transformers\Nested {
-    use jfadich\JsonResponder\Transformer;
+    use jfadich\EloquentResources\Transformer;
 
     class NestedModelTransformer extends Transformer {
 

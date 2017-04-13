@@ -1,6 +1,6 @@
 <?php
 
-namespace jfadich\JsonResponder\Console;
+namespace jfadich\EloquentResources\Console;
 
 use Illuminate\Filesystem\Filesystem;
 use Symfony\Component\Console\Input\InputOption;

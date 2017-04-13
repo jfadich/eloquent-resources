@@ -1,8 +1,8 @@
 <?php
 
-namespace jfadich\JsonResponder\Traits;
+namespace jfadich\EloquentResources\Traits;
 
-use jfadich\JsonResponder\TransformationManager;
+use jfadich\EloquentResources\TransformationManager;
 
 /**
  * Trait to facilitate model transformations.

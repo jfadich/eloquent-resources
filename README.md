@@ -7,11 +7,11 @@ This trait adds the ability to easily return JSON responses from Controllers, Mi
 
 Add the service provider to the `$providers` array in `app.php`
 
-    jfadich\JsonResponder\Providers\LaravelServiceProvider::class
+    jfadich\EloquentResources\Providers\LaravelServiceProvider::class
     
 If you wish to make and customizations publish the config config to `config/transformers.php` with this command.
 
-    $ php artisan vendor:publish --provider="jfadich\JsonResponder\Providers\LaravelServiceProvider"
+    $ php artisan vendor:publish --provider="jfadich\EloquentResources\Providers\LaravelServiceProvider"
     
 ## Transformers
 
@@ -20,45 +20,61 @@ This package provides a command to generate new transformers and locate the corr
 Transformers found from the model by looking for the class `App\Transformers\{ModelName}Transformer`. 
 You can customize the transformers namespace to use in `config/transformers.php`. 
 
-### Making Transformers
+## Getting Started
 
-To make a new transformer for `BlogPost` execute the following command. 
-
-    $ php artisan make:transformer BlogPostTransformer --model=BlogPost
-    
-This will generate a new model class in `app\Transformers\BlogPostTransformer.php`.
-
-    <?php
-    
-    namespace App\Transformers;
-    
-    use jfadich\JsonResponder\Transformer;
-    use App\BlogPost;
-    
-    class BlogPostTransformer extends Transformer
-    {    
-        public function transform(BlogPost $blogPost)
-        {
-            return [
-                //
-            ];
-        }
-    }
-    
-Before this transformer can be use the `BlogPost` must be transformable. 
-It is recommended to add the `Transformable` trait and contract to a base model that the rest of your models extend. 
+Every model that has a transformer must implement the `jfadich\EloquentResources\Contracts\Transformable` contract.
+The required methods can be included using the `jfadich\EloquentResources\Transformable` trait.
+It's recommended to add this contract to a `BaseModel` that the rest of your transformable models extend.
 
     <?php
     
     namespace App;
     
-    use jfadich\JsonResponder\Contracts\Transformable as TransformableContract;
-    use jfadich\JsonResponder\Traits\Transformable;
+    use jfadich\EloquentResources\Contracts\Transformable as TransformableContract;
+    use jfadich\EloquentResources\Traits\Transformable;
     use Illuminate\Database\Eloquent\Model;
     
     class BaseModel extends Model implements TransformableContract
     {
         use Transformable;
+    }
+    
+For the rest of these examples let's use a `Post` model.
+
+    <?php
+    namespace App;
+    
+    class Post extends BaseModel
+    {
+        public function author()
+        {
+            return $this->hasOne(Author::class);
+        }
+    }
+    
+### Making Transformers
+
+To make a new transformer for `Post` execute the following command. 
+
+    $ php artisan make:transformer PostTransformer --model=Post
+    
+This will generate a new model class in `app\Transformers\PostTransformer.php`.
+
+    <?php
+    
+    namespace App\Transformers;
+    
+    use jfadich\EloquentResources\Transformer;
+    use App\BlogPost;
+    
+    class PostTransformer extends Transformer
+    {    
+        public function transform(Post $post)
+        {
+            return [
+                //
+            ];
+        }
     }
     
 ### Includes
@@ -67,10 +83,10 @@ See the Fractal docs on included data for the basics of how included data on tra
 To make a property on the model available for inclusion add it to the `protected $available` property on your transformer.
 
     
-    class BlogPostTransformer extends Transformer
+    class PostTransformer extends Transformer
     {    
         protected $available = ['author']
     }
     
-When using Fractal transformers you must define `includeAuthor()` methods for all available includes. 
-The transformers in this package will automatically define these methods for any Eloquent relationship.
+When using Fractal transformers you must define `includeAuthor()` method. This package will do this for you. 
+It can automatically relieve any eloquent relationship and use the relevant transformer. 

@@ -1,6 +1,6 @@
 <?php
 
-namespace jfadich\JsonResponder\Exceptions;
+namespace jfadich\EloquentResources\Exceptions;
 
 
 class InvalidModelRelation extends \Exception

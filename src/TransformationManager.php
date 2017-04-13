@@ -1,9 +1,9 @@
 <?php
 
-namespace jfadich\JsonResponder;
+namespace jfadich\EloquentResources;
 
-use jfadich\JsonResponder\Contracts\Transformable;
-use jfadich\JsonResponder\Exceptions\InvalidResourceTypeException;
+use jfadich\EloquentResources\Contracts\Transformable;
+use jfadich\EloquentResources\Exceptions\InvalidResourceTypeException;
 
 class TransformationManager
 {

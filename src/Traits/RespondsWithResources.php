@@ -1,15 +1,15 @@
 <?php
 
-namespace jfadich\JsonResponder\Traits;
+namespace jfadich\EloquentResources\Traits;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use jfadich\JsonResponder\Contracts\Transformable;
-use jfadich\JsonResponder\Exceptions\MissingTransformerException;
-use jfadich\JsonResponder\Transformer;
+use jfadich\EloquentResources\Contracts\Transformable;
+use jfadich\EloquentResources\Exceptions\MissingTransformerException;
+use jfadich\EloquentResources\Transformer;
 use League\Fractal\Manager as Fractal;
 use League\Fractal\Pagination\IlluminatePaginatorAdapter;
 use League\Fractal\Resource\Collection;

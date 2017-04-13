@@ -1,8 +1,8 @@
 <?php
 
-namespace jfadich\JsonResponder\Contracts;
+namespace jfadich\EloquentResources\Contracts;
 
-use jfadich\JsonResponder\Presenter;
+use jfadich\EloquentResources\Presenter;
 
 interface Presentable
 {

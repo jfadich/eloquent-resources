@@ -1,9 +1,9 @@
 <?php
 
-namespace jfadich\JsonResponder;
+namespace jfadich\EloquentResources;
 
-use jfadich\JsonResponder\Exceptions\InvalidModelRelation;
-use jfadich\JsonResponder\Contracts\Transformable;
+use jfadich\EloquentResources\Exceptions\InvalidModelRelation;
+use jfadich\EloquentResources\Contracts\Transformable;
 use League\Fractal\TransformerAbstract;
 use Illuminate\Support\Collection;
 use League\Fractal\ParamBag;
