@@ -137,25 +137,26 @@ trait RespondsWithResources
             }
 
             $model = $resource->getModel();
-
-            if(!is_callable($callback)) {
-                if(!$model instanceof Transformable)
-                    throw new MissingTransformerException('Provided model must be an instance of Transformable');
-
-                /** @var Transformer $callback */
-                $callback = $model->getTransformer();
-            }
-
-            if($callback instanceof Transformer) {
-                $includes = $this->getIncludes($callback->getLazyIncludes());
-            } else {
-                $includes = $this->getIncludes();
-            }
-
-            $resource = $resource->with($this->getEagerLoad($includes));
+        } else {
+            $model = $resource;
         }
 
-        if($callback === null || !is_callable($callback)) {
+        if(!is_callable($callback)) {
+            if(!$model instanceof Transformable)
+                throw new MissingTransformerException('Provided model must be an instance of Transformable');
+
+            $callback = $model->getTransformer();
+        }
+
+        if($callback instanceof Transformer) {
+            $includes = $this->getIncludes($callback->getLazyIncludes());
+        } else {
+            $includes = $this->getIncludes();
+        }
+
+        $resource = $resource->with($this->getEagerLoad($includes));
+
+        if($callback === null || (!is_callable($callback) && !$callback instanceof Transformer)) {
             throw new MissingTransformerException('Resource callback not provided.');
         }
 
