@@ -30,6 +30,13 @@ abstract class GeneratorCommand extends LaravelGenerator
     protected $namespace;
 
     /**
+     * The type of class being generated
+     *
+     * @var string
+     */
+    protected $type;
+
+    /**
      * Array of traits to the included in the class.
      *
      * @var array
@@ -46,13 +53,11 @@ abstract class GeneratorCommand extends LaravelGenerator
     {
         parent::__construct($files);
 
-        if ($this->parentClass === null)
+        if ($this->type === null)
             throw new GeneratorException('Parent class not set');
 
-        $parentClass = explode('\\', $this->parentClass);
-
-        $this->type = array_pop($parentClass);
-        $this->namespace = config('transformers.namespaces.'.strtolower($this->type).'s');
+        $this->parentClass = config('transformers.classes.'.strtolower($this->type));
+        $this->namespace   = config('transformers.namespaces.'.strtolower($this->type).'s');
     }
 
     /**

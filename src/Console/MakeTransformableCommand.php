@@ -25,6 +25,13 @@ class MakeTransformableCommand extends GeneratorCommand
     protected $description = 'Create a new Transformable Model class';
 
     /**
+     * The type of class being generated
+     *
+     * @var string
+     */
+    protected $type = 'Model';
+
+    /**
      * Set the base class then call the parent
      *
      * @param Filesystem $files

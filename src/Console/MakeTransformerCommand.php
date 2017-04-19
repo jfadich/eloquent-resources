@@ -29,6 +29,13 @@ class MakeTransformerCommand extends GeneratorCommand
     protected $description = 'Create a new transformer class';
 
     /**
+     * The type of class being generated
+     *
+     * @var string
+     */
+    protected $type = 'Transformer';
+
+    /**
      * Set the base class then call the parent
      *
      * @param Filesystem $files
