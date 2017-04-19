@@ -5,6 +5,7 @@ namespace jfadich\EloquentResources\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use jfadich\EloquentResources\Console\MakePresenterCommand;
+use jfadich\EloquentResources\Console\MakeTransformableCommand;
 use jfadich\EloquentResources\Console\MakeTransformerCommand;
 use jfadich\EloquentResources\TransformationManager;
 
@@ -23,8 +24,9 @@ class LaravelServiceProvider extends ServiceProvider
 
         if($this->app->runningInConsole()) {
             $this->commands([
-                MakePresenterCommand::class,
-                MakeTransformerCommand::class
+                MakeTransformableCommand::class,
+                MakeTransformerCommand::class,
+                MakePresenterCommand::class
             ]);
         }
     }
