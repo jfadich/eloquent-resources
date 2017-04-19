@@ -21,7 +21,7 @@ class Presenter
      *
      * @var string
      */
-    protected $dateFormat = 'm/d/Y';
+    protected $dateFormat = 'Y-m-d H:i:s';
 
     /**
      * @param Presentable $model
