@@ -26,6 +26,9 @@ trait RespondsWithResources
      */
     protected $fractal;
 
+    /**
+     * @var Request
+     */
     protected $request;
 
     /**
@@ -53,13 +56,26 @@ trait RespondsWithResources
     /**
      * Take a model, transformer and generate a API response
      *
-     * @param Transformable $item
+     * @param Transformable|Builder|Relation $item
+     * @param Callable|array $callback
      * @param array $meta
-     * @return \Illuminate\Http\Response
+     * @return Response
+     * @throws MissingTransformerException
      */
-    public function respondWithItem(Transformable $item, $meta = [])
+    public function respondWithItem($item, $callback = null, $meta = [])
     {
-        $resource = new Item($item, $item->getTransformer());
+        list($item, $callback, $meta) = $this->resolveQuery($item, $callback, $meta);
+
+        // If a query builder instance is given set the eager loads and paginate the data.
+        if ($item instanceof Builder || $item instanceof Relation) {
+            $item = $item->firstOrFail();
+        }
+
+        if($callback === null) {
+            throw new MissingTransformerException('Collection callback not provided.');
+        }
+
+        $resource = new Item($item, $callback);
 
         if (!empty($meta)) {
             foreach ($meta as $k => $v) {
@@ -84,32 +100,16 @@ trait RespondsWithResources
      */
     public function respondWithCollection($collection, $callback = null, $meta = [])
     {
+        list($collection, $callback, $meta) = $this->resolveQuery($collection, $callback, $meta);
+
         // If a query builder instance is given set the eager loads and paginate the data.
         if ($collection instanceof Builder || $collection instanceof Relation) {
-            // If the given $callback is not callable check for a meta array
-            if(!is_callable($callback)) {
-                $meta = $callback === null ? [] : $callback;
-            }
-
-            $model = $collection->getModel();
-
-            if(!$model instanceof Transformable)
-                throw new MissingTransformerException('Provided model must be an instance of Transformable');
-
-            /** @var Transformer $callback */
-            $callback = $model->getTransformer();
-            $includes = $this->getIncludes($callback->getLazyIncludes());
-            $collection = $collection->with($this->getEagerLoad($includes))->paginate($this->getCount());
-        }
-
-        if($callback === null) {
-            throw new MissingTransformerException('Collection callback not provided.');
+            $collection = $collection->paginate($this->getCount());
         }
 
         $resource = new Collection($collection->all(), $callback);
 
         if (!empty($meta)) {
-
             foreach ($meta as $k => $v) {
                 $resource->setMetaValue($k, $v);
             }
@@ -125,6 +125,41 @@ trait RespondsWithResources
         $data = $this->fractal->createData($resource);
 
         return $this->respondWithArray($data->toArray());
+    }
+
+    protected function resolveQuery($resource, $callback = null, $meta = [])
+    {
+        // If a query builder instance is given set the eager loads and paginate the data.
+        if ($resource instanceof Builder || $resource instanceof Relation) {
+            // If the given $callback is not callable check for a meta array
+            if(is_array($callback) && empty($meta)) {
+                $meta = $callback;
+            }
+
+            $model = $resource->getModel();
+
+            if(!is_callable($callback)) {
+                if(!$model instanceof Transformable)
+                    throw new MissingTransformerException('Provided model must be an instance of Transformable');
+
+                /** @var Transformer $callback */
+                $callback = $model->getTransformer();
+            }
+
+            if($callback instanceof Transformer) {
+                $includes = $this->getIncludes($callback->getLazyIncludes());
+            } else {
+                $includes = $this->getIncludes();
+            }
+
+            $resource = $resource->with($this->getEagerLoad($includes));
+        }
+
+        if($callback === null || !is_callable($callback)) {
+            throw new MissingTransformerException('Resource callback not provided.');
+        }
+
+        return [$resource, $callback, $meta];
     }
 
     /**
