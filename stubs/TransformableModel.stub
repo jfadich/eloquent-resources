@@ -1,0 +1,10 @@
+<?php
+
+namespace DummyNamespace;
+
+DummyImport
+class DummyClass extends TransformableModel
+{
+    DummyTraits
+    DummyTable
+}
