@@ -73,6 +73,17 @@ abstract class GeneratorCommand extends LaravelGenerator
         return $this->prepClass($stub, $name)->replaceImports($stub, $name)->replaceTraits($stub)->replaceClass($stub, $name);
     }
 
+    protected function replaceParent(&$stub, $name)
+    {
+        $stub = str_replace(
+            'DummyParent',
+            class_basename($this->parentClass),
+            $stub
+        );
+
+        return $this;
+    }
+
     /**
      * Set the namespace.
      * Also acts as a hook for child generators to have access to the stub
@@ -83,7 +94,7 @@ abstract class GeneratorCommand extends LaravelGenerator
      */
     protected function prepClass(&$stub, $name)
     {
-        return $this->replaceNamespace($stub, $name);
+        return $this->replaceNamespace($stub, $name)->replaceParent($stub, $name);
     }
 
 

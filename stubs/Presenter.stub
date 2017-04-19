@@ -3,7 +3,7 @@
 namespace DummyNamespace;
 
 DummyImport
-class DummyClass extends Presenter
+class DummyClass extends DummyParent
 {
     //
 }

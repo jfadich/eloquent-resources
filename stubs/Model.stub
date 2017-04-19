@@ -3,7 +3,7 @@
 namespace DummyNamespace;
 
 DummyImport
-class DummyClass extends TransformableModel
+class DummyClass extends DummyParent
 {
     DummyTraits
     DummyTable

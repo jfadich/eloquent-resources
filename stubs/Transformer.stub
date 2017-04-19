@@ -3,7 +3,7 @@
 namespace DummyNamespace;
 
 DummyImport
-class DummyClass extends Transformer
+class DummyClass extends DummyParent
 {
     /**
      * Return an array of data to be returned from the API
