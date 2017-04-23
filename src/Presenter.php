@@ -90,6 +90,11 @@ class Presenter
         return $this->model->id;
     }
 
+    public function resource_type()
+    {
+        return app(TransformationManager::class)->getResourceTypeFromClass($this->model);
+    }
+
     /**
      * Magic shortcut to present($property)
      *

@@ -83,19 +83,13 @@ abstract class Transformer extends TransformerAbstract
      */
     public function prepModel(Presentable $model, array $transformed)
     {
-        $id = ['id' => $model->present('id')];
+        $resource = ['id' => $model->present('id')] + $transformed;
 
-        $dates = [
-            'created'   => $model->present('created_at', 'timestamp'),
-            'updated'   => $model->present('updated_at', 'timestamp')
+        return $resource + [
+            'created'       => $model->present('created_at', 'timestamp'),
+            'updated'       => $model->present('updated_at', 'timestamp'),
+            'resource_type' => $model->present('resource_type')
         ];
-
-        if($model instanceof Transformable)
-            $type = ['resource_type' => $model->getResourceType()];
-        else
-            $type = [];
-
-        return  $id + $transformed + $dates + $type;
     }
 
     /**
