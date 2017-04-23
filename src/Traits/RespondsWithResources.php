@@ -4,6 +4,7 @@ namespace jfadich\EloquentResources\Traits;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -130,7 +131,9 @@ trait RespondsWithResources
     protected function resolveQuery($resource, $callback = null, $meta = [])
     {
         // If a query builder instance is given set the eager loads and paginate the data.
-        if ($resource instanceof Builder || $resource instanceof Relation) {
+        $isQuery = $resource instanceof Builder || $resource instanceof Relation;
+
+        if ($isQuery) {
             // If the given $callback is not callable check for a meta array
             if(is_array($callback) && empty($meta)) {
                 $meta = $callback;
@@ -154,7 +157,16 @@ trait RespondsWithResources
             $includes = $this->getIncludes();
         }
 
-        $resource = $resource->with($this->getEagerLoad($includes));
+        // Eager load the included relationships. If a model is given, make sure the related models aren't already loaded
+        if( !empty($includes) ) {
+            if ($isQuery) {
+                $resource = $resource->with($this->getEagerLoad($includes));
+            } elseif( $resource instanceof Model ) {
+                if( empty($resource->getRelations()) ) {
+                    $resource = $resource->load($this->getEagerLoad($includes));
+                }
+            }
+        }
 
         if($callback === null || (!is_callable($callback) && !$callback instanceof Transformer)) {
             throw new MissingTransformerException('Resource callback not provided.');
