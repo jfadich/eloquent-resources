@@ -65,8 +65,7 @@ class MakeTransformerCommand extends GeneratorCommand
      */
     protected function replaceModel(&$stub)
     {
-        if (!$model = $this->parseModel())
-            $model = ['class' => 'Model', 'namespace' => 'Illuminate\Database\Eloquent'];
+        $model = $this->parseModel();
 
         $this->imports[] = $model['namespace'] . '\\' . $model['class'];
 
@@ -103,7 +102,7 @@ class MakeTransformerCommand extends GeneratorCommand
     private function parseModel()
     {
         if (!$model = $this->option('model'))
-            return null;
+            $model = config('transformers.classes.model');
 
         if (!starts_with($model, config('transformers.namespaces.models')))
             $model = config('transformers.namespaces.models') .'\\'. $model;
