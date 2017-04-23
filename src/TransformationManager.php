@@ -2,8 +2,8 @@
 
 namespace jfadich\EloquentResources;
 
-use jfadich\EloquentResources\Contracts\Transformable;
 use jfadich\EloquentResources\Exceptions\InvalidResourceTypeException;
+use jfadich\EloquentResources\Contracts\Transformable;
 
 class TransformationManager
 {
@@ -11,6 +11,11 @@ class TransformationManager
      * @var array
      */
     protected $transformers = [];
+
+    /**
+     * @var array
+     */
+    protected $types = [];
 
     /**
      * @var string
@@ -54,15 +59,19 @@ class TransformationManager
      */
     public function getClassFromResourceType($typeString)
     {
-        $type = explode('-', $typeString);
-        $class = $this->modelNamespace;
+        if( !($class = array_search($typeString, $this->types)) ) {
+            $type = explode('-', $typeString);
+            $class = $this->modelNamespace;
 
-        foreach ($type as $namespace) {
-            $class .= '\\' . studly_case($namespace);
-        }
+            foreach ($type as $namespace) {
+                $class .= '\\' . studly_case($namespace);
+            }
 
-        if (!class_exists($class)) {
-            throw new InvalidResourceTypeException("Invalid model type: {$typeString}");
+            if (!class_exists($class)) {
+                throw new InvalidResourceTypeException("Invalid model type: {$typeString}");
+            }
+
+            $this->types[$class] = $typeString;
         }
 
         return $class;
@@ -74,28 +83,32 @@ class TransformationManager
      * @param $class
      * @return array|mixed|string
      */
-    public  function getResourceTypeFromClass($class)
+    public function getResourceTypeFromClass($class)
     {
-        $namespace = str_replace("$this->modelNamespace\\", '', $class);
-        $namespace = explode('\\', $namespace);
+        if( !array_key_exists($class, $this->types) ) {
+            $namespace = str_replace("$this->modelNamespace\\", '', $class);
+            $namespace = explode('\\', $namespace);
 
-        $type = [];
-        foreach ($namespace as $segment) {
-            $type[] = snake_case($segment);
+            $type = [];
+            foreach ($namespace as $segment) {
+                $type[] = snake_case($segment);
+            }
+
+            $this->types[$class] = implode('-', $type);
         }
 
-        return implode('-', $type);
+        return $this->types[$class];
     }
 
     /**
      * Get transformer from the model.
-     * If the associated transformed is not in the default namespace, refer to the $transformer property.
      *
+     * @param Transformable|string $model
      * @return Transformer
      */
-    public function getTransformer(Transformable $model)
+    public function getTransformer($model)
     {
-        $class = get_class($model);
+        $class = is_string($model) ? $model : get_class($model);
         $type = $this->getResourceTypeFromClass($class);
 
         if(array_key_exists($type, $this->transformers))

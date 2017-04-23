@@ -26,7 +26,17 @@ trait Transformable
      */
     public function getTransformer()
     {
-        return app(TransformationManager::class)->getTransformer($this);
+        return static::transformer();
+    }
+
+    /**
+     * Resolve the transformer from the TransformationManager
+     *
+     * @return \jfadich\EloquentResources\Transformer
+     */
+    public static function transformer()
+    {
+        return app(TransformationManager::class)->getTransformer(static::class);
     }
 
     /**
