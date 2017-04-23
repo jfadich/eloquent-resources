@@ -2,6 +2,7 @@
 
 namespace jfadich\EloquentResources;
 
+use jfadich\EloquentResources\Contracts\Presentable;
 use jfadich\EloquentResources\Exceptions\InvalidModelRelation;
 use jfadich\EloquentResources\Contracts\Transformable;
 use League\Fractal\TransformerAbstract;
@@ -71,6 +72,30 @@ abstract class Transformer extends TransformerAbstract
         }
 
         return $result;
+    }
+
+    /**
+     * Add commonly used properties to the transformed data.
+     *
+     * @param Presentable $model
+     * @param array $transformed
+     * @return array
+     */
+    public function prepModel(Presentable $model, array $transformed)
+    {
+        $id = ['id' => $model->present('id')];
+
+        $dates = [
+            'created'   => $model->present('created_at', 'timestamp'),
+            'updated'   => $model->present('updated_at', 'timestamp')
+        ];
+
+        if($model instanceof Transformable)
+            $type = ['resource_type' => $model->getResourceType()];
+        else
+            $type = [];
+
+        return  $id + $transformed + $dates + $type;
     }
 
     /**

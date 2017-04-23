@@ -70,10 +70,14 @@ class MakeTransformerCommand extends GeneratorCommand
 
         $this->imports[] = $model['namespace'] . '\\' . $model['class'];
 
-        $modelVar = $model['class'] . ' $' . lcfirst($model['class']);
+        $modelVar = '$' . lcfirst($model['class']);
 
         $stub = str_replace(
-            'DummyModel', $modelVar, $stub
+            'DummyModelVariable', $modelVar, $stub
+        );
+
+        $stub = str_replace(
+            'DummyModelClass', $model['class'], $stub
         );
 
         return $this;

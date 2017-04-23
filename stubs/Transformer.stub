@@ -8,13 +8,13 @@ class DummyClass extends DummyParent
     /**
      * Return an array of data to be returned from the API
      *
-     * @param DummyModel
+     * @param DummyModelClass DummyModelVariable
      * @return array
      */
-    public function transform(DummyModel)
+    public function transform(DummyModelClass DummyModelVariable)
     {
-        return [
+        return $this->prepModel(DummyModelVariable,[
             //
-        ];
+        ]);
     }
 }
