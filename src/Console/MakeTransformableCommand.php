@@ -55,10 +55,14 @@ class MakeTransformableCommand extends GeneratorCommand
         }
 
         if (parent::fire() !== false) {
-            $this->call('make:transformer', ['name' => $this->argument('name') . 'Transformer', '-m' => $this->parseName($this->argument('name'))]);
+            $name = $this->argument('name');
+
+            // parseName() was renamed to qualifyClass() in 5.4. Check which method to use to support 5.1-5.4
+            $model = method_exists($this, 'parseName') ? $this->parseName($name) : $this->qualifyClass($name);
+            $this->call('make:transformer', ['name' => $name . 'Transformer', '-m' => $model]);
 
             if ($this->option('present')) {
-                $this->call('make:presenter', ['name' => $this->argument('name') . 'Presenter']);
+                $this->call('make:presenter', ['name' => $model . 'Presenter']);
             }
         }
     }
