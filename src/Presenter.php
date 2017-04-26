@@ -84,7 +84,7 @@ class Presenter
      */
     public function resource_type()
     {
-        return app(TransformationManager::class)->getResourceTypeFromClass($this->model);
+        return app(ResourceManager::class)->getResourceTypeFromClass($this->model);
     }
 
     /**

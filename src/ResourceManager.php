@@ -5,7 +5,7 @@ namespace jfadich\EloquentResources;
 use jfadich\EloquentResources\Exceptions\InvalidResourceTypeException;
 use jfadich\EloquentResources\Contracts\Transformable;
 
-class TransformationManager
+class ResourceManager
 {
     /**
      * @var array
@@ -33,7 +33,6 @@ class TransformationManager
     protected $presentersNamespace = 'App\\Presenters';
 
     /**
-     * TransformationManager constructor.
      * @param string $model
      * @param string $transformer
      * @param string $presenter

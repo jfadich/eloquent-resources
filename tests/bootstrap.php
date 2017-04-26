@@ -1,7 +1,7 @@
 <?php
 
 
-use jfadich\EloquentResources\TransformationManager;
+use jfadich\EloquentResources\ResourceManager;
 
 require __DIR__ . '/../vendor/autoload.php';
 require 'test_classes.php';
@@ -22,10 +22,10 @@ if( ! function_exists('app')) {
     function app($make) {
         static $manager;
 
-        if($make === TransformationManager::class) {
+        if($make === ResourceManager::class) {
             if ($manager === null) {
                 $config = config('transformers.namespaces');
-                $manager = new TransformationManager($config['models'], $config['transformers'], $config['presenters']);
+                $manager = new ResourceManager($config['models'], $config['transformers'], $config['presenters']);
             }
 
             return $manager;

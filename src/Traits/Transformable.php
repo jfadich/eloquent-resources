@@ -2,7 +2,7 @@
 
 namespace jfadich\EloquentResources\Traits;
 
-use jfadich\EloquentResources\TransformationManager;
+use jfadich\EloquentResources\ResourceManager;
 
 /**
  * Trait to facilitate model transformations.
@@ -16,7 +16,7 @@ trait Transformable
      */
     public function getResourceType()
     {
-        return app(TransformationManager::class)->getResourceTypeFromClass(get_class($this));
+        return app(ResourceManager::class)->getResourceTypeFromClass(get_class($this));
     }
 
     /**
@@ -30,13 +30,13 @@ trait Transformable
     }
 
     /**
-     * Resolve the transformer from the TransformationManager
+     * Resolve the transformer from the ResourceManager
      *
      * @return \jfadich\EloquentResources\Transformer
      */
     public static function transformer()
     {
-        return app(TransformationManager::class)->getTransformer(static::class);
+        return app(ResourceManager::class)->getTransformer(static::class);
     }
 
     /**
@@ -48,7 +48,7 @@ trait Transformable
      */
     public function getByResourceType($type, $id)
     {
-        $model = app(TransformationManager::class)->getClassFromResourceType($type);
+        $model = app(ResourceManager::class)->getClassFromResourceType($type);
         $model = new $model();
 
         return $model::where($model->getKeyName(), $id)->firstOrFail();

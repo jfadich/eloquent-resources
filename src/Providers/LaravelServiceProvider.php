@@ -7,7 +7,7 @@ use Illuminate\Support\ServiceProvider;
 use jfadich\EloquentResources\Console\MakePresenterCommand;
 use jfadich\EloquentResources\Console\MakeTransformableCommand;
 use jfadich\EloquentResources\Console\MakeTransformerCommand;
-use jfadich\EloquentResources\TransformationManager;
+use jfadich\EloquentResources\ResourceManager;
 
 class LaravelServiceProvider extends ServiceProvider
 {
@@ -42,10 +42,10 @@ class LaravelServiceProvider extends ServiceProvider
             __DIR__.'/../../config/config.php', 'transformers'
         );
 
-        $this->app->singleton(TransformationManager::class, function ($app) {
+        $this->app->singleton(ResourceManager::class, function ($app) {
             $namespaces = config('transformers.namespaces');
 
-            return new TransformationManager($namespaces['models'], $namespaces['transformers'], $namespaces['presenters']);
+            return new ResourceManager($namespaces['models'], $namespaces['transformers'], $namespaces['presenters']);
         });
     }
 }

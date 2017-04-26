@@ -1,13 +1,13 @@
 <?php
 
-use jfadich\EloquentResources\TransformationManager;
+use jfadich\EloquentResources\ResourceManager;
 use PHPUnit\Framework\TestCase;
 
-class TransformationManagerTest extends TestCase
+class ResourceManagerTest extends TestCase
 {
     public function test_resolve_resource_type_from_namespace()
     {
-        $manager = new TransformationManager;
+        $manager = new ResourceManager;
 
         $this->assertEquals('test_model', $manager->getResourceTypeFromClass(App\TestModel::class));
         $this->assertEquals('nested-nested_model', $manager->getResourceTypeFromClass(\App\Nested\NestedModel::class));
@@ -15,7 +15,7 @@ class TransformationManagerTest extends TestCase
 
     public function test_resolve_namespace_from_resource_type()
     {
-        $manager = new TransformationManager;
+        $manager = new ResourceManager;
 
         $this->assertEquals(\App\TestModel::class, $manager->getClassFromResourceType('test_model'));
         $this->assertEquals(\App\Nested\NestedModel::class, $manager->getClassFromResourceType('nested-nested_model'));
@@ -23,7 +23,7 @@ class TransformationManagerTest extends TestCase
 
     public function test_get_transformer_from_model()
     {
-        $manager = new TransformationManager;
+        $manager = new ResourceManager;
 
         $testModel = new \App\TestModel();
         $nestedModel = new \App\Nested\NestedModel();
@@ -34,7 +34,7 @@ class TransformationManagerTest extends TestCase
 
     public function test_invalid_model_type()
     {
-        $manager = new TransformationManager;
+        $manager = new ResourceManager;
 
         $this->expectException(\jfadich\EloquentResources\Exceptions\InvalidResourceTypeException::class);
 
