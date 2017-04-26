@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\{
 };
 
 use jfadich\EloquentResources\{
+    Contracts\Presentable,
     Exceptions\InvalidResourceTypeException,
     Exceptions\MissingTransformerException,
     Contracts\Transformable
@@ -170,11 +171,11 @@ class ResourceManager
         if (class_exists($transformer)) {
             $this->transformers[$type] = new $transformer;
         } else {
-            $this->transformers[$type] = function ($model) use($type) {
-                return [
-                    'id' => $model->present('id'),
-                    'type' => $type
-                ];
+            $this->transformers[$type] = new class extends Transformer {
+                public function transform(Presentable $model)
+                {
+                    return $this->prepModel($model);
+                }
             };
         }
 
@@ -185,15 +186,17 @@ class ResourceManager
      * Get the eagerload array. If sort/order params are provided apply them to the eagerload constraint
      *
      * @param array $includes
+     * @param Transformer $transformer
      * @return array
      */
-    protected function getEagerLoad($includes = [])
+    protected function getEagerLoad($includes = [], Transformer $transformer)
     {
         $eager = [];
 
         foreach($includes as $include) {
-            $order = $this->fractal->getIncludeParams($include);
-            $order = $order['order'] ?? null;
+            $params = $this->fractal->getIncludeParams($include);
+            $params = $transformer->parseParams($params);
+            $order = $params['order'] ?? null;
 
             if (is_array($order) && count($order) === 2 && in_array($order[1], ['desc', 'asc'])) {
                 $eager[$include] = function($query) use($order) {
@@ -278,7 +281,7 @@ class ResourceManager
             if(!$model instanceof Transformable)
                 throw new MissingTransformerException('Provided model must be an instance of Transformable');
 
-            $callback = $model->getTransformer();
+            $callback = $this->getTransformer($model);
         }
 
         if($callback instanceof Transformer) {
@@ -290,10 +293,10 @@ class ResourceManager
         // Eager load the included relationships. If a model is given, make sure the related models aren't already loaded
         if( !empty($includes) ) {
             if ($isQuery) {
-                $resource = $resource->with($this->getEagerLoad($includes));
+                $resource = $resource->with($this->getEagerLoad($includes, $callback));
             } elseif( $resource instanceof Model ) {
                 if( empty($resource->getRelations()) ) {
-                    $resource = $resource->load($this->getEagerLoad($includes));
+                    $resource = $resource->load($this->getEagerLoad($includes, $callback));
                 }
             }
         }

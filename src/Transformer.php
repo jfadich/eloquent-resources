@@ -47,7 +47,7 @@ abstract class Transformer extends TransformerAbstract
      * @param Transformer $transformer
      * @return array
      */
-    public function parseParams(ParamBag $params = null, Transformer $transformer)
+    public function parseParams(ParamBag $params = null, Transformer $transformer = null)
     {
         $result = ['limit' => null, 'order' => null];
 
@@ -62,7 +62,7 @@ abstract class Transformer extends TransformerAbstract
             $result['limit'] = min($limit[0], config('transformers.parameters.count.max'));
         }
 
-        $availableSortColumns = $this->resolveOrderColumns($transformer);
+        $availableSortColumns = $this->resolveOrderColumns($transformer ?: $this);
 
         if (is_array($order) && count($order) === 2) {
             if (in_array($order[0], array_keys($availableSortColumns)) && in_array($order[1], ['desc', 'asc'])) {
@@ -81,7 +81,7 @@ abstract class Transformer extends TransformerAbstract
      * @param array $transformed
      * @return array
      */
-    public function prepModel(Presentable $model, array $transformed)
+    public function prepModel(Presentable $model, array $transformed = [])
     {
         $resource = ['id' => $model->present('id')] + $transformed;
 
