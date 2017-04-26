@@ -84,6 +84,8 @@ class ResourceManager
      */
     public function getResourceTypeFromClass($class)
     {
+        $class = is_string($class) ? $class : get_class($class);
+
         if( !array_key_exists($class, $this->types) ) {
             $namespace = str_replace("$this->modelNamespace\\", '', $class);
             $namespace = explode('\\', $namespace);
