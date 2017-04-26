@@ -78,18 +78,10 @@ class Presenter
     }
 
     /**
-     * If the model ID is a UUID, convert the binary representation into something that can be displayed
+     * Get the resource type for the current model
      *
-     * @return mixed
+     * @return string
      */
-    public function id()
-    {
-        if(!ctype_print($this->model->id))
-            return bin2hex($this->model->id);
-
-        return $this->model->id;
-    }
-
     public function resource_type()
     {
         return app(TransformationManager::class)->getResourceTypeFromClass($this->model);
