@@ -220,7 +220,7 @@ class ResourceManager
         return $eager;
     }
 
-    public function resolveCollectionResource($collection, $callback = null, $meta = [])
+    public function buildCollectionResource($collection, $callback = null, $meta = [])
     {
         list($collection, $callback, $meta) = $this->resolveQuery($collection, $callback, $meta);
 
@@ -264,7 +264,7 @@ class ResourceManager
         return $this->fractal->createData($resource);
     }
 
-    public function resolveItemResource($item, $callback = null, $meta = [])
+    public function buildItemResource($item, $callback = null, $meta = [])
     {
         list($item, $callback, $meta) = $this->resolveQuery($item, $callback, $meta);
 
@@ -290,11 +290,10 @@ class ResourceManager
 
     protected function resolveQuery($resource, $callback = null, $meta = [])
     {
-        // If a query builder instance is given set the eager loads and paginate the data.
         $isQuery = $resource instanceof Builder || $resource instanceof Relation;
 
         if ($isQuery) {
-            // If the given $callback is not callable check for a meta array
+            // If the given $callback is an array assume it's the meta data and get the real callback from the query
             if(is_array($callback) && empty($meta)) {
                 $meta = $callback;
             }

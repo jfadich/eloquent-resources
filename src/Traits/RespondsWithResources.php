@@ -24,7 +24,7 @@ trait RespondsWithResources
      */
     public function respondWithItem($item, $callback = null, $meta = [])
     {
-        $data = app(ResourceManager::class)->resolveItemResource($item, $callback, $meta);
+        $data = app(ResourceManager::class)->buildItemResource($item, $callback, $meta);
 
         return $this->respondWithArray($data->toArray());
     }
@@ -41,7 +41,7 @@ trait RespondsWithResources
      */
     public function respondWithCollection($collection, $callback = null, $meta = [])
     {
-        $data = app(ResourceManager::class)->resolveCollectionResource($collection, $callback, $meta);
+        $data = app(ResourceManager::class)->buildCollectionResource($collection, $callback, $meta);
 
         return $this->respondWithArray($data->toArray());
     }
