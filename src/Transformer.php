@@ -66,7 +66,7 @@ abstract class Transformer extends TransformerAbstract
         }
 
         $config = config('transformers.parameters');
-        $order = $params->get($config['order']['name']);
+        $order = $params->get($config['sort']['name']);
         $limit = $params->get($config['count']['name']);
 
         if ( is_numeric($limit[0]) && $limit[0] > 0 ) {

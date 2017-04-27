@@ -225,6 +225,13 @@ class ResourceManager
 
         // If a query builder instance is given set the eager loads and paginate the data.
         if ($collection instanceof Builder || $collection instanceof Relation) {
+            $orderName = config('transformers.parameters.order.name');
+            if($this->request->has($orderName)) {
+                $sort = explode(':', $this->request->get($orderName));
+                $order = in_array($sort[1] ?? 'asc', ['asc', 'desc']) ? $sort[1] : 'asc';
+
+                $collection = $collection->orderBy($sort[0], $order);
+            }
             $collection = $collection->paginate($this->getResourceCount());
 
         }
