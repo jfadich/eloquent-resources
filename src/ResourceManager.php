@@ -20,7 +20,8 @@ use League\Fractal\{
     Pagination\IlluminatePaginatorAdapter,
     Resource\Collection,
     Manager as Fractal,
-    Resource\Item
+    Resource\Item,
+    ParamBag
 };
 
 use Illuminate\{
@@ -225,15 +226,24 @@ class ResourceManager
 
         // If a query builder instance is given set the eager loads and paginate the data.
         if ($collection instanceof Builder || $collection instanceof Relation) {
-            $orderName = config('transformers.parameters.order.name');
-            if($this->request->has($orderName)) {
-                $sort = explode(':', $this->request->get($orderName));
-                $order = in_array($sort[1] ?? 'asc', ['asc', 'desc']) ? $sort[1] : 'asc';
+            $config = config('transformers.parameters');
 
-                $collection = $collection->orderBy($sort[0], $order);
+            if($this->request->has($config['sort']['name'])) {
+                $sort = explode('|', $this->request->get($config['sort']['name']));
+
+                $column = !empty($sort[0]) ? $sort[0] : null;
+                $order  = !empty($sort[1]) && in_array($sort[1], ['asc', 'desc']) ? $sort[1] : 'asc';
+
+                if($column !== null && $callback instanceof Transformer) {
+                    $params = $callback->parseParams(new ParamBag([
+                        $config['sort']['name'] => [$column, $order]
+                    ]));
+
+                    $collection = $collection->orderBy($params['order'][0], $params['order'][1]);
+                }
             }
-            $collection = $collection->paginate($this->getResourceCount());
 
+            $collection = $collection->paginate($this->getResourceCount());
         }
 
         $resource = new Collection($collection->all(), $callback);
