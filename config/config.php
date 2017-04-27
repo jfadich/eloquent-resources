@@ -31,6 +31,9 @@ return [
             'default'   => 25,
             'max'       => 1000
         ],
+        'order' => [
+            'name'      => 'order',
+        ],
         'includes'      => [
             'name'      => 'with',
             'max'       => 5

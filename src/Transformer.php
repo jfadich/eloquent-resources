@@ -31,6 +31,13 @@ abstract class Transformer extends TransformerAbstract
     protected $lazyIncludes = [];
 
     /**
+     * Order and Sort parameters
+     *
+     * @var array
+     */
+    protected $parsedParams;
+
+    /**
      * Default sort columns available for all models.
      *
      * @var array ['api_name' => 'sql_field']
@@ -48,17 +55,22 @@ abstract class Transformer extends TransformerAbstract
      */
     public function parseParams(ParamBag $params = null)
     {
-        $result = ['limit' => null, 'order' => null];
-
-        if ($params === null) {
-            return $result;
+        if($this->parsedParams !== null) {
+            return $this->parsedParams;
         }
 
-        $order = $params->get('order');
-        $limit = $params->get(config('transformers.parameters.count.name'));
+        $this->parsedParams = ['limit' => null, 'order' => null];
 
-        if (is_numeric($limit[0])) {
-            $result['limit'] = min($limit[0], config('transformers.parameters.count.max'));
+        if ($params === null) {
+            return $this->parsedParams;
+        }
+
+        $config = config('transformers.parameters');
+        $order = $params->get($config['order']['name']);
+        $limit = $params->get($config['count']['name']);
+
+        if ( is_numeric($limit[0]) && $limit[0] > 0 ) {
+            $this->parsedParams['limit'] = min($limit[0], $config['count']['max']);
         }
 
         $availableSortColumns = $this->getOrderColumns();
@@ -66,11 +78,11 @@ abstract class Transformer extends TransformerAbstract
         if (is_array($order) && count($order) === 2) {
             if (in_array($order[0], array_keys($availableSortColumns)) && in_array($order[1], ['desc', 'asc'])) {
                 $order[0] = $availableSortColumns[$order[0]];
-                $result['order'] = $order;
+                $this->parsedParams['order'] = $order;
             }
         }
 
-        return $result;
+        return $this->parsedParams;
     }
 
     /**

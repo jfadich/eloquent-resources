@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\{
 
 use jfadich\EloquentResources\{
     Contracts\Presentable,
+    Exceptions\InvalidModelRelation,
     Exceptions\InvalidResourceTypeException,
     Exceptions\MissingTransformerException,
     Contracts\Transformable
@@ -185,17 +186,25 @@ class ResourceManager
     /**
      * Get the eagerload array. If sort/order params are provided apply them to the eagerload constraint
      *
-     * @param array $includes
      * @param Transformer $transformer
+     * @param $model
      * @return array
+     * @throws InvalidModelRelation
      */
-    protected function getEagerLoad($includes = [], Transformer $transformer)
+    protected function getEagerLoad(Transformer $transformer, $model)
     {
         $eager = [];
+        $includes = $this->getIncludes($transformer->getLazyIncludes());
 
         foreach($includes as $include) {
-            $params = $this->fractal->getIncludeParams($include);
-            $params = $transformer->parseParams($params);
+            if(!method_exists($model, $include)) {
+                throw new InvalidModelRelation("'$include' cannot be eager loaded. If the include is not an Eloquent relation try adding it to the 'lazyIncludes' array on the transformer");
+            }
+
+            $relatedModel = $model->{$include}()->getRelated();
+            $relatedTransformer = $this->getTransformer($relatedModel);
+
+            $params = $relatedTransformer->parseParams($this->fractal->getIncludeParams($include));
             $order = $params['order'] ?? null;
 
             if (is_array($order) && count($order) === 2 && in_array($order[1], ['desc', 'asc'])) {
@@ -217,6 +226,7 @@ class ResourceManager
         // If a query builder instance is given set the eager loads and paginate the data.
         if ($collection instanceof Builder || $collection instanceof Relation) {
             $collection = $collection->paginate($this->getResourceCount());
+
         }
 
         $resource = new Collection($collection->all(), $callback);
@@ -285,18 +295,18 @@ class ResourceManager
         }
 
         if($callback instanceof Transformer) {
-            $includes = $this->getIncludes($callback->getLazyIncludes());
+            $eager = $this->getEagerLoad($callback, $model);
         } else {
-            $includes = $this->getIncludes();
+            $eager = $this->getIncludes();
         }
 
         // Eager load the included relationships. If a model is given, make sure the related models aren't already loaded
-        if( !empty($includes) ) {
+        if( !empty($eager) ) {
             if ($isQuery) {
-                $resource = $resource->with($this->getEagerLoad($includes, $callback));
+                $resource = $resource->with($eager);
             } elseif( $resource instanceof Model ) {
                 if( empty($resource->getRelations()) ) {
-                    $resource = $resource->load($this->getEagerLoad($includes, $callback));
+                    $resource = $resource->load($this->getEagerLoad($callback, $model));
                 }
             }
         }
@@ -321,7 +331,6 @@ class ResourceManager
 
         return array_except($this->fractal->getRequestedIncludes(), $except);
     }
-
 
     /**
      * Get the per page count from the request, or the default
