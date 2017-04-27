@@ -44,10 +44,9 @@ abstract class Transformer extends TransformerAbstract
      * Parse the limit and order parameters
      *
      * @param ParamBag $params
-     * @param Transformer $transformer
      * @return array
      */
-    public function parseParams(ParamBag $params = null, Transformer $transformer = null)
+    public function parseParams(ParamBag $params = null)
     {
         $result = ['limit' => null, 'order' => null];
 
@@ -62,7 +61,7 @@ abstract class Transformer extends TransformerAbstract
             $result['limit'] = min($limit[0], config('transformers.parameters.count.max'));
         }
 
-        $availableSortColumns = $this->resolveOrderColumns($transformer ?: $this);
+        $availableSortColumns = $this->getOrderColumns();
 
         if (is_array($order) && count($order) === 2) {
             if (in_array($order[0], array_keys($availableSortColumns)) && in_array($order[1], ['desc', 'asc'])) {
@@ -99,18 +98,7 @@ abstract class Transformer extends TransformerAbstract
      */
     public function getOrderColumns()
     {
-        return $this->orderColumns;
-    }
-
-    /**
-     * Get all order columns, including the defaults
-     *
-     * @param Transformer $transformer
-     * @return array
-     */
-    protected function resolveOrderColumns(Transformer $transformer)
-    {
-        return array_merge($this->defaultOrderColumns, $transformer->getOrderColumns());
+        return array_merge($this->defaultOrderColumns, $this->orderColumns);
     }
 
     /**
@@ -218,7 +206,7 @@ abstract class Transformer extends TransformerAbstract
         $transformer = $this->getRelatedTransformer($model, $relation);
 
         if ($data instanceof Collection) {
-            $params = $this->parseParams($arguments[1], $transformer);
+            $params = $transformer->parseParams($arguments[1]);
 
             if($params['limit'] !== null) {
                 $data = $data->take($params['limit']);
