@@ -3,6 +3,7 @@
 namespace jfadich\EloquentResources;
 
 use Illuminate\Database\Eloquent\{
+    Collection as EloquentCollection,
     Relations\Relation,
     Builder,
     Model
@@ -192,7 +193,7 @@ class ResourceManager
      * @return array
      * @throws InvalidModelRelation
      */
-    protected function getEagerLoad(Transformer $transformer, $model)
+    public function getEagerLoad(Transformer $transformer, $model)
     {
         $eager = [];
         $includes = $this->getIncludes($transformer->getLazyIncludes());
@@ -222,6 +223,10 @@ class ResourceManager
 
     public function buildCollectionResource($collection, $callback = null, $meta = [])
     {
+        if(empty($collection)) {
+            return $this->fractal->createData(new Collection([], function() { } ));
+        }
+
         list($collection, $callback, $meta) = $this->resolveQuery($collection, $callback, $meta);
 
         // If a query builder instance is given set the eager loads and paginate the data.
@@ -300,7 +305,7 @@ class ResourceManager
 
             $model = $resource->getModel();
         } else {
-            $model = $resource;
+            $model = $resource instanceof EloquentCollection ? $resource->first() : $resource;
         }
 
         if(!is_callable($callback)) {

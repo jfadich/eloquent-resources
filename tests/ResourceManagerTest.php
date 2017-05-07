@@ -64,4 +64,12 @@ class ResourceManagerTest extends TestCase
 
         $this->assertEquals($manager->getEagerLoad($transformer, $model), ['nestedModel' => function() { }]);
     }
+
+    public function test_make_collection()
+    {
+        $manager = new ResourceManager(New League\Fractal\Manager(), new \Illuminate\Http\Request());
+
+        $resource = $manager->buildItemResource(new TestModel);
+
+    }
 }
