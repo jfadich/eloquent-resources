@@ -24,8 +24,8 @@ if( ! function_exists('app')) {
 
         if($make === ResourceManager::class) {
             if ($manager === null) {
-                $config = config('transformers.namespaces');
-                $manager = new ResourceManager($config['models'], $config['transformers'], $config['presenters']);
+                $namespaces = config('transformers.namespaces');
+                $manager = new ResourceManager(new \League\Fractal\Manager, new \Illuminate\Http\Request, $namespaces);
             }
 
             return $manager;
