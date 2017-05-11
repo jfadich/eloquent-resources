@@ -11,9 +11,10 @@ use Illuminate\Database\Eloquent\{
 
 use jfadich\EloquentResources\{
     Contracts\Presentable,
-    Exceptions\InvalidModelRelation,
+    Exceptions\InvalidModelRelationException,
     Exceptions\InvalidResourceTypeException,
     Exceptions\MissingTransformerException,
+    Exceptions\InvalidResourceException,
     Contracts\Transformable
 };
 
@@ -27,6 +28,7 @@ use League\Fractal\{
 
 use Illuminate\{
     Contracts\Pagination\LengthAwarePaginator,
+    Support\Collection as LaravelCollection,
     Http\Request
 };
 
@@ -175,9 +177,12 @@ class ResourceManager
             $this->transformers[$type] = new $transformer;
         } else {
             $this->transformers[$type] = new class extends Transformer {
-                public function transform(Presentable $model)
+                public function transform($model)
                 {
-                    return $this->prepModel($model);
+                    if($model instanceof Presentable)
+                        return $this->prepModel($model);
+
+                    return (array) $model;
                 }
             };
         }
@@ -191,7 +196,7 @@ class ResourceManager
      * @param Transformer $transformer
      * @param $model
      * @return array
-     * @throws InvalidModelRelation
+     * @throws InvalidModelRelationException
      */
     public function getEagerLoad(Transformer $transformer, $model)
     {
@@ -200,7 +205,7 @@ class ResourceManager
 
         foreach($includes as $include) {
             if(!method_exists($model, $include)) {
-                throw new InvalidModelRelation("'$include' cannot be eager loaded. If the include is not an Eloquent relation try adding it to the 'lazyIncludes' array on the transformer");
+                throw new InvalidModelRelationException("'$include' cannot be eager loaded. If the include is not an Eloquent relation try adding it to the 'lazyIncludes' array on the transformer");
             }
 
             $relatedModel = $model->{$include}()->getRelated();
@@ -221,13 +226,22 @@ class ResourceManager
         return $eager;
     }
 
-    public function buildCollectionResource($collection, $callback = null, $meta = [])
+    /**
+     * Take an Eloquent query or collection, find the transformer then use fractal to build the resource array
+     *
+     * @param $collection
+     * @param array $meta
+     * @param Callable|array $callback
+     * @return \League\Fractal\Scope
+     * @throws InvalidResourceException
+     */
+    public function buildCollectionResource($collection, $meta = [], $callback = null)
     {
         if(empty($collection)) {
             return $this->fractal->createData(new Collection([], function() { } ));
         }
 
-        list($collection, $callback, $meta) = $this->resolveQuery($collection, $callback, $meta);
+        list($collection, $callback) = $this->resolveCallback($collection, $callback);
 
         // If a query builder instance is given set the eager loads and paginate the data.
         if ($collection instanceof Builder || $collection instanceof Relation) {
@@ -239,10 +253,15 @@ class ResourceManager
                 $column = !empty($sort[0]) ? $sort[0] : null;
                 $order  = !empty($sort[1]) && in_array($sort[1], ['asc', 'desc']) ? $sort[1] : 'asc';
 
-                if($column !== null && $callback instanceof Transformer) {
-                    $params = $callback->parseParams(new ParamBag([
-                        $config['sort']['name'] => [$column, $order]
-                    ]));
+                if($column !== null) {
+                    if($callback instanceof Transformer) {
+                        // Use the transformer to parse any sort columns that don't match the DB schema
+                        $params = $callback->parseParams(new ParamBag([
+                            $config['sort']['name'] => [$column, $order]
+                        ]));
+                    } else {
+                        $params = [ 'order' => [$column, $order] ];
+                    }
 
                     $collection = $collection->orderBy($params['order'][0], $params['order'][1]);
                 }
@@ -251,7 +270,15 @@ class ResourceManager
             $collection = $collection->paginate($this->getResourceCount());
         }
 
-        $resource = new Collection($collection->all(), $callback);
+        if(is_array($collection)) {
+            $resources = $collection;
+        } elseif($collection instanceof EloquentCollection || $collection instanceof LaravelCollection) {
+            $resources = $collection->all();
+        } else {
+            throw new InvalidResourceException('Resources must be an array or Laravel Collection');
+        }
+
+        $resource = new Collection($resources, $callback);
 
         if (!empty($meta)) {
             foreach ($meta as $k => $v) {
@@ -259,7 +286,6 @@ class ResourceManager
             }
         }
 
-        // Set the pagination details
         if ($collection instanceof LengthAwarePaginator) {
             $collection->appends($this->request->except('page'));
 
@@ -269,17 +295,20 @@ class ResourceManager
         return $this->fractal->createData($resource);
     }
 
-    public function buildItemResource($item, $callback = null, $meta = [])
+    /**
+     * Take an Eloquent query or model, find the transformer then use fractal to build the resource
+     *
+     * @param $item
+     * @param array $meta
+     * @param Callable|array $callback
+     * @return \League\Fractal\Scope
+     */
+    public function buildItemResource($item, $meta = [], $callback = null)
     {
-        list($item, $callback, $meta) = $this->resolveQuery($item, $callback, $meta);
+        list($item, $callback) = $this->resolveCallback($item, $callback);
 
-        // If a query builder instance is given set the eager loads and paginate the data.
         if ($item instanceof Builder || $item instanceof Relation) {
             $item = $item->firstOrFail();
-        }
-
-        if($callback === null) {
-            throw new MissingTransformerException('Collection callback not provided.');
         }
 
         $resource = new Item($item, $callback);
@@ -293,25 +322,31 @@ class ResourceManager
         return $this->fractal->createData($resource);
     }
 
-    protected function resolveQuery($resource, $callback = null, $meta = [])
+    /**
+     * Get the callback for the given model or array of models
+     *
+     * @param $resource
+     * @param null $callback
+     * @return array
+     * @throws MissingTransformerException
+     */
+    protected function resolveCallback($resource, $callback = null)
     {
         $isQuery = $resource instanceof Builder || $resource instanceof Relation;
 
         if ($isQuery) {
-            // If the given $callback is an array assume it's the meta data and get the real callback from the query
-            if(is_array($callback) && empty($meta)) {
-                $meta = $callback;
-            }
-
             $model = $resource->getModel();
         } else {
-            $model = $resource instanceof EloquentCollection ? $resource->first() : $resource;
+            if(is_array($resource) || $resource instanceof \ArrayAccess) {
+                if(empty($resource))
+                    return [$resource, function() {}];
+
+                $model = $resource[0];
+            } else
+                $model = $resource;
         }
 
         if(!is_callable($callback)) {
-            if(!$model instanceof Transformable)
-                throw new MissingTransformerException('Provided model must be an instance of Transformable');
-
             $callback = $this->getTransformer($model);
         }
 
@@ -336,7 +371,7 @@ class ResourceManager
             throw new MissingTransformerException('Resource callback not provided.');
         }
 
-        return [$resource, $callback, $meta];
+        return [$resource, $callback];
     }
 
     /**
