@@ -56,7 +56,7 @@ class ResourceManagerTest extends TestCase
 
         $request->replace(['with'   => 'invalidRelationship']);
         $manager = new ResourceManager(New League\Fractal\Manager(), $request);
-        $this->expectException(\jfadich\EloquentResources\Exceptions\InvalidModelRelation::class);
+        $this->expectException(\jfadich\EloquentResources\Exceptions\InvalidModelRelationException::class);
         $manager->getEagerLoad($transformer, $model);
 
         $request->replace(['with'   => 'nestedModel:sort(created|desc)']);
