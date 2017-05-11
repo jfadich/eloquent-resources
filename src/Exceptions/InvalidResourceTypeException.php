@@ -2,7 +2,7 @@
 
 namespace jfadich\EloquentResources\Exceptions;
 
-class InvalidResourceTypeException extends \Exception
+class InvalidResourceTypeException extends EloquentResourcesException
 {
 
 }

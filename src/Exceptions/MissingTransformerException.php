@@ -3,7 +3,7 @@
 namespace jfadich\EloquentResources\Exceptions;
 
 
-class MissingTransformerException extends \Exception
+class MissingTransformerException extends EloquentResourcesException
 {
 
 }

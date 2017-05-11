@@ -3,7 +3,7 @@
 namespace jfadich\EloquentResources\Exceptions;
 
 
-class GeneratorException extends EloquentResourcesException
+class EloquentResourcesException extends \Exception
 {
 
 }

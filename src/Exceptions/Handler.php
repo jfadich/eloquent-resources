@@ -29,8 +29,8 @@ class Handler extends ExceptionHandler
         if($e instanceof NotFoundHttpException)
             return $this->respondNotFound('Page not found');
 
-        if($e instanceof InvalidModelRelation)
-            return $this->respondBadRequest($e->getMessage());
+        if($e instanceof EloquentResourcesException)
+            return $this->respondInternalError($e->getMessage());
 
         if ( $e instanceof MethodNotAllowedHttpException ) {
             return $this->setStatusCode( Response::HTTP_METHOD_NOT_ALLOWED )->respondWithError( 'Method not Allowed' );

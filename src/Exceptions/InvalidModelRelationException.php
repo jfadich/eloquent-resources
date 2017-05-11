@@ -3,7 +3,7 @@
 namespace jfadich\EloquentResources\Exceptions;
 
 
-class InvalidModelRelation extends \Exception
+class InvalidModelRelationException extends EloquentResourcesException
 {
 
 }

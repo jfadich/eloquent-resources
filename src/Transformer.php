@@ -3,7 +3,7 @@
 namespace jfadich\EloquentResources;
 
 use jfadich\EloquentResources\Contracts\Presentable;
-use jfadich\EloquentResources\Exceptions\InvalidModelRelation;
+use jfadich\EloquentResources\Exceptions\InvalidModelRelationException;
 use jfadich\EloquentResources\Contracts\Transformable;
 use League\Fractal\TransformerAbstract;
 use Illuminate\Support\Collection;
@@ -166,17 +166,17 @@ abstract class Transformer extends TransformerAbstract
      * @param $model
      * @param $relation
      * @return mixed
-     * @throws InvalidModelRelation
+     * @throws InvalidModelRelationException
      */
     protected function getRelatedTransformer($model, $relation)
     {
         if (!method_exists($model, $relation) || !($relationship = $model->$relation())) {
             $class = get_class($model);
-            throw new InvalidModelRelation("'$relation' is invalid relation for '$class'");
+            throw new InvalidModelRelationException("'$relation' is invalid relation for '$class'");
         }
 
         if (!($related = $relationship->getRelated()) instanceof Transformable) {
-            throw new InvalidModelRelation('Model must be a Transformable instance');
+            throw new InvalidModelRelationException('Model must be a Transformable instance');
         }
 
         return $related->getTransformer();
@@ -199,7 +199,7 @@ abstract class Transformer extends TransformerAbstract
      * @param $method
      * @param $arguments
      * @return \League\Fractal\Resource\Collection|\League\Fractal\Resource\Item|null
-     * @throws InvalidModelRelation
+     * @throws InvalidModelRelationException
      */
     public function __call($method, $arguments)
     {
