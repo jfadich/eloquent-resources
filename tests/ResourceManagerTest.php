@@ -65,11 +65,33 @@ class ResourceManagerTest extends TestCase
         $this->assertEquals($manager->getEagerLoad($transformer, $model), ['nestedModel' => function() { }]);
     }
 
+    public function test_make_item()
+    {
+        $manager = new ResourceManager(New League\Fractal\Manager(), new \Illuminate\Http\Request());
+        $item = new TestModel;
+
+        $resource = $manager->buildItemResource($item);
+        $this->assertEquals(['data' => ['test' => 'transformed']], $resource->toArray());
+
+    }
+
     public function test_make_collection()
     {
         $manager = new ResourceManager(New League\Fractal\Manager(), new \Illuminate\Http\Request());
+        $collection = new \Illuminate\Database\Eloquent\Collection([new TestModel]);
 
-        $resource = $manager->buildItemResource(new TestModel);
+        $resource = $manager->buildCollectionResource($collection);
+        $this->assertEquals(['data' => [['test' => 'transformed']]], $resource->toArray());
 
+        $resource = $manager->buildCollectionResource($collection, ['key' => 'meta value']);
+        $this->assertEquals([
+            'data' => [['test' => 'transformed']],
+            'meta' => ['key' => 'meta value']
+        ], $resource->toArray());
+
+        $resource = $manager->buildCollectionResource($collection, [], function() {
+            return ['test' => 'anonymously transformed'];
+        });
+        $this->assertEquals(['data' => [['test' => 'anonymously transformed']]], $resource->toArray());
     }
 }

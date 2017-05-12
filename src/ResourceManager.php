@@ -355,7 +355,7 @@ class ResourceManager
                 throw new InvalidResourceException('Invalid resource provided');
         }
 
-        if(!is_callable($callback)) {
+        if($callback === null || (!is_callable($callback) && !$callback instanceof Transformer)) {
             $callback = $this->getTransformer($model);
         }
 

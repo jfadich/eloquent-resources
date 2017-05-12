@@ -34,6 +34,11 @@ namespace App\Transformers {
 
     class TestModelTransformer extends Transformer {
         protected $availableIncludes = ['nestedModel'];
+
+        public function transform()
+        {
+            return ['test' => 'transformed'];
+        }
     }
 }
 
