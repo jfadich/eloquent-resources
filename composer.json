@@ -1,5 +1,5 @@
 {
-    "name": "jfadich/json-responder",
+    "name": "jfadich/eloquent-resources",
     "description": "Easily generate JSON responses for Laravel 5.1+",
     "license": "MIT",
     "authors": [
