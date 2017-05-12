@@ -278,7 +278,10 @@ class ResourceManager
 
         if(is_array($collection)) {
             $resources = $collection;
-        } elseif($collection instanceof EloquentCollection || $collection instanceof LaravelCollection) {
+        } elseif(
+            $collection instanceof EloquentCollection ||
+            $collection instanceof LaravelCollection ||
+            $collection instanceof LengthAwarePaginator) {
             $resources = $collection->all();
         } else {
             throw new InvalidResourceException('Resources must be an array or Laravel Collection');
