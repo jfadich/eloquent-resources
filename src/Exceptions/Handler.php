@@ -2,41 +2,24 @@
 
 namespace jfadich\EloquentResources\Exceptions;
 
-use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use jfadich\EloquentResources\Traits\RespondsWithJson;
+use jfadich\EloquentResources\Traits\HandlesExceptions;
 use Symfony\Component\Debug\ExceptionHandler;
-use Illuminate\Http\Response;
 use Exception;
 
 class Handler extends ExceptionHandler
 {
-    use RespondsWithJson;
+    use HandlesExceptions;
 
     /**
      * Render an exception into an HTTP response.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Exception  $e
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\Response
      */
     public function render($request, Exception $e)
     {
-        if ($e instanceof ModelNotFoundException)
-            return $this->respondNotFound('Resource not found');
-
-        if($e instanceof NotFoundHttpException)
-            return $this->respondNotFound('Page not found');
-
-        if($e instanceof EloquentResourcesException)
-            return $this->respondInternalError($e->getMessage());
-
-        if ( $e instanceof MethodNotAllowedHttpException ) {
-            return $this->setStatusCode( Response::HTTP_METHOD_NOT_ALLOWED )->respondWithError( 'Method not Allowed' );
-        }
-
-        return parent::render($request, $e);
+        return $this->renderJsonExceptions($e);
     }
 
 }
