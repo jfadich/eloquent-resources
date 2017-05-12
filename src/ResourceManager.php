@@ -179,8 +179,14 @@ class ResourceManager
             $this->transformers[$type] = new class extends Transformer {
                 public function transform($model)
                 {
+                    if(is_array($model))
+                        return $model;
+
                     if($model instanceof Presentable)
                         return $this->prepModel($model);
+
+                    if(method_exists($model, 'toArray'))
+                        return $model->toArray();
 
                     return (array) $model;
                 }
@@ -328,6 +334,7 @@ class ResourceManager
      * @param $resource
      * @param null $callback
      * @return array
+     * @throws InvalidResourceException
      * @throws MissingTransformerException
      */
     protected function resolveCallback($resource, $callback = null)
@@ -337,13 +344,15 @@ class ResourceManager
         if ($isQuery) {
             $model = $resource->getModel();
         } else {
-            if(is_array($resource) || $resource instanceof \ArrayAccess) {
+            if($resource instanceof Model)
+                $model = $resource;
+            elseif(is_array($resource) || $resource instanceof \ArrayAccess) {
                 if(empty($resource))
                     return [$resource, function() {}];
 
                 $model = $resource[0];
             } else
-                $model = $resource;
+                throw new InvalidResourceException('Invalid resource provided');
         }
 
         if(!is_callable($callback)) {
