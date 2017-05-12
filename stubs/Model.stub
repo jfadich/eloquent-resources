@@ -1,0 +1,10 @@
+<?php
+
+namespace DummyNamespace;
+
+DummyImport
+class DummyClass extends DummyParent
+{
+    DummyTraits
+    DummyTable
+}

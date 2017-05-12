@@ -1,0 +1,20 @@
+<?php
+
+namespace DummyNamespace;
+
+DummyImport
+class DummyClass extends DummyParent
+{
+    /**
+     * Return an array of data to be returned from the API
+     *
+     * @param DummyModelClass DummyModelVariable
+     * @return array
+     */
+    public function transform(DummyModelClass DummyModelVariable)
+    {
+        return $this->prepModel(DummyModelVariable,[
+            //
+        ]);
+    }
+}

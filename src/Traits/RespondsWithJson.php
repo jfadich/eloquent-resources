@@ -1,6 +1,6 @@
 <?php
 
-namespace Jfadich\JsonResponder;
+namespace jfadich\EloquentResources\Traits;
 
 use Illuminate\Http\Response;
 
@@ -28,7 +28,7 @@ trait RespondsWithJson
     /**
      * @param array $array
      * @param array $headers
-     * @return \Illuminate\Http\JsonResponse
+     * @return Response
      */
     public function respondWithArray(array $array, array $headers = [])
     {
@@ -37,80 +37,83 @@ trait RespondsWithJson
 
     /**
      * @param $message
-     * @return \Illuminate\Http\JsonResponse
+     * @param mixed $info
+     * @param array $headers
+     * @return Response
      */
-    public function respondWithError($message)
+    public function respondWithError($message, $info = null, array $headers = [])
     {
-        if ($this->statusCode === 200) {
+        if ($this->statusCode === Response::HTTP_OK) {
             $this->setStatusCode(Response::HTTP_BAD_REQUEST);
         }
 
-        return $this->makeResponse([
-            'error' => [
-                'message' => $message,
-                'error_code' => $this->getErrorCode(),
-                'http_status' => $this->getStatusCode()
-            ]
-        ]);
+        return $this->makeResponse($this->formatErrorMessage($message, $info), $headers);
     }
 
     /**
      * @param string $message
-     * @return \Illuminate\Http\JsonResponse
+     * @param array $headers
+     * @return Response
      */
-    public function respondNotFound($message = 'Resource not found')
+    public function respondNotFound($message = 'Resource not found', array $headers = [])
     {
-        return $this->setStatusCode(Response::HTTP_NOT_FOUND)->respondWithError($message);
+        return $this->setStatusCode(Response::HTTP_NOT_FOUND)->respondWithError($message, null, $headers);
     }
 
     /**
      * @param string $message
-     * @return \Illuminate\Http\JsonResponse
+     * @param array $headers
+     * @return Response
      */
-    public function respondUnauthorized($message = 'You are not authorized')
+    public function respondUnauthorized($message = 'You are not authorized', array $headers = [])
     {
-        return $this->setStatusCode(Response::HTTP_UNAUTHORIZED)->respondWithError($message);
+        return $this->setStatusCode(Response::HTTP_UNAUTHORIZED)->respondWithError($message, null, $headers);
     }
 
     /**
      * @param string $message
-     * @return \Illuminate\Http\JsonResponse
+     * @param array $headers
+     * @return Response
      */
-    public function respondForbidden($message = 'You are forbidden')
+    public function respondForbidden($message = 'You are forbidden', array $headers = [])
     {
-        return $this->setStatusCode(Response::HTTP_FORBIDDEN)->respondWithError($message);
+        return $this->setStatusCode(Response::HTTP_FORBIDDEN)->respondWithError($message, null, $headers);
     }
 
     /**
      * @param string $message
-     * @return \Illuminate\Http\JsonResponse
+     * @param array $headers
+     * @return Response
      */
-    public function respondInternalError($message = 'Internal Error')
+    public function respondInternalError($message = 'Internal Error', array $headers = [])
     {
-        return $this->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR)->respondWithError($message);
+        return $this->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR)->respondWithError($message, null, $headers);
     }
 
     /**
      * @param string $message
-     * @return \Illuminate\Http\JsonResponse
+     * @param array $headers
+     * @return Response
      */
-    public function respondBadRequest($message = 'Bad Request')
+    public function respondBadRequest($message = 'Bad Request', array $headers = [])
     {
-        return $this->setStatusCode(Response::HTTP_BAD_REQUEST)->respondWithError($message);
+        return $this->setStatusCode(Response::HTTP_BAD_REQUEST)->respondWithError($message, null, $headers);
     }
 
     /**
      * @param string $message
-     * @return \Illuminate\Http\JsonResponse
+     * @param mixed $errors
+     * @param array $headers
+     * @return Response
      */
-    public function respondUnprocessableEntity($message = 'Incomplete or invalid entity')
+    public function respondUnprocessableEntity($message = 'Incomplete or invalid entity', $errors = null, array $headers = [])
     {
-        return $this->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY)->respondWithError($message);
+        return $this->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY)->respondWithError($message, $errors, $headers);
     }
 
     /**
      * @param array $headers
-     * @return \Illuminate\Http\JsonResponse
+     * @return Response
      */
     public function respondNoContent($headers = [])
     {
@@ -121,7 +124,7 @@ trait RespondsWithJson
      * Alias for respondNoContent()
      *
      * @param array $headers
-     * @return \Illuminate\Http\JsonResponse
+     * @return Response
      */
     public function respondDeleted($headers = [])
     {
@@ -131,11 +134,11 @@ trait RespondsWithJson
     /**
      * 
      * @param $message
-     * @return \Illuminate\Http\JsonResponse
+     * @return Response
      */
-    public function respondConflict($message)
+    public function respondConflict($message, array $headers = [])
     {
-        return $this->setStatusCode(Response::HTTP_CONFLICT)->respondWithError($message);
+        return $this->setStatusCode(Response::HTTP_CONFLICT)->respondWithError($message, null, $headers);
     }
 
     /**
@@ -188,6 +191,31 @@ trait RespondsWithJson
         $this->errorCode = $code;
 
         return $this;
+    }
+
+    /**
+     * Prepare the error object to be returned
+     *
+     * @param $message
+     * @param mixed $info
+     * @return array
+     */
+    protected function formatErrorMessage($message, $info = null)
+    {
+        $data =  [
+            'error' => [
+                'message' => $message,
+            ],
+            'http_status' => $this->getStatusCode()
+        ];
+
+        if($this->getErrorCode() !== -1)
+            $data['error']['code'] = $this->getErrorCode();
+
+        if($info !== null)
+            $data['error']['info'] = $info;
+
+        return $data;
     }
 
     /**
