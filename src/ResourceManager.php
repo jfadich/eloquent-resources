@@ -91,6 +91,9 @@ class ResourceManager
         $this->request = $request;
         $this->fractal->setRecursionLimit(config('transformers.parameters.includes.max'));
 
+        if($serializer = config('transformers.serializer'))
+            $this->fractal->setSerializer(new $serializer);
+
         $includesName = config('transformers.parameters.includes.name');
         if($request->has($includesName))
             $this->fractal->parseIncludes($request->get($includesName));

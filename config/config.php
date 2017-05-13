@@ -56,4 +56,6 @@ return [
         'presenter'     => jfadich\EloquentResources\Presenter::class,
         'model'         => jfadich\EloquentResources\TransformableModel::class
     ],
+
+    'serializer'        => League\Fractal\Serializer\DataArraySerializer::class
 ];
