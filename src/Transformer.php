@@ -65,7 +65,7 @@ abstract class Transformer extends TransformerAbstract
             return $this->parsedParams;
         }
 
-        $config = config('transformers.parameters');
+        $config = config('resources.parameters');
         $order = $params->get($config['sort']['name']);
         $limit = $params->get($config['count']['name']);
 

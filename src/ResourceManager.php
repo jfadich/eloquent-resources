@@ -89,12 +89,12 @@ class ResourceManager
     {
         $this->fractal = $fractal;
         $this->request = $request;
-        $this->fractal->setRecursionLimit(config('transformers.parameters.includes.max'));
+        $this->fractal->setRecursionLimit(config('resources.parameters.includes.max'));
 
-        if($serializer = config('transformers.serializer'))
+        if($serializer = config('resources.serializer'))
             $this->fractal->setSerializer(new $serializer);
 
-        $includesName = config('transformers.parameters.includes.name');
+        $includesName = config('resources.parameters.includes.name');
         if($request->has($includesName))
             $this->fractal->parseIncludes($request->get($includesName));
 
@@ -254,7 +254,7 @@ class ResourceManager
 
         // If a query builder instance is given set the eager loads and paginate the data.
         if ($collection instanceof Builder || $collection instanceof Relation) {
-            $config = config('transformers.parameters');
+            $config = config('resources.parameters');
 
             if($this->request->has($config['sort']['name'])) {
                 $sort = explode('|', $this->request->get($config['sort']['name']));
@@ -410,7 +410,7 @@ class ResourceManager
      */
     public function getResourceCount()
     {
-        $config = config('transformers.parameters.count');
+        $config = config('resources.parameters.count');
 
         return $this->request->get($config['name'], $config['default']);
     }

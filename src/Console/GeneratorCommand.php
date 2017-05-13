@@ -56,8 +56,8 @@ abstract class GeneratorCommand extends LaravelGenerator
         if ($this->type === null)
             throw new GeneratorException('Parent class not set');
 
-        $this->parentClass = config('transformers.classes.'.strtolower($this->type));
-        $this->namespace   = config('transformers.namespaces.'.strtolower($this->type).'s');
+        $this->parentClass = config('resources.classes.'.strtolower($this->type));
+        $this->namespace   = config('resources.namespaces.'.strtolower($this->type).'s');
     }
 
     /**
