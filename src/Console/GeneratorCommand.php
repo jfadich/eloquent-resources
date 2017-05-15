@@ -175,7 +175,7 @@ abstract class GeneratorCommand extends LaravelGenerator
      */
     protected function getStub()
     {
-        return base_path("vendor/jfadich/json-responder/stubs/{$this->type}.stub");
+        return base_path("vendor/jfadich/eloquent-resources/stubs/{$this->type}.stub");
     }
 
     /**
