@@ -390,7 +390,7 @@ class ResourceManager
                 $resource = $resource->with($eager);
             } elseif( $resource instanceof Model ) {
                 if( empty($resource->getRelations()) ) {
-                    $resource = $resource->load($this->getEagerLoad($callback, $model));
+                    $resource = $resource->load($eager);
                 }
             }
         }
