@@ -213,17 +213,30 @@ class ResourceManager
         $includes = $this->getIncludes($transformer->getLazyIncludes());
 
         foreach($includes as $include) {
-            if(!method_exists($model, $include)) {
+            $nested = collect(explode('.',$include));
+            $params = $this->fractal->getIncludeParams($include);
+            $order = $params->get(config('resources.parameters.sort.name'));
+
+            if(!method_exists($model, $nested->first()) || $nested->isEmpty()) {
                 throw new InvalidModelRelationException("'$include' cannot be eager loaded. If the include is not an Eloquent relation try adding it to the 'lazyIncludes' array on the transformer");
             }
 
-            $relatedModel = $model->{$include}()->getRelated();
-            $relatedTransformer = $this->getTransformer($relatedModel);
+            if(!$order) {
+                $eager[] = $include;
+                continue;
+            }
+
+            do {
+                $nestedInclude = $nested->shift();
+
+                $model = $model->{$nestedInclude}()->getRelated();
+                $relatedTransformer = $this->getTransformer($model);
+            } while($nested->isNotEmpty());
 
             $params = $relatedTransformer->parseParams($this->fractal->getIncludeParams($include));
             $order = $params['order'] ?? null;
 
-            if (is_array($order) && count($order) === 2 && in_array($order[1], ['desc', 'asc'])) {
+            if (is_array($order)) {
                 $eager[$include] = function($query) use($order) {
                     return $query->orderBy($order[0], $order[1]);
                 };
