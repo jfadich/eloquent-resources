@@ -424,7 +424,8 @@ class ResourceManager
     public function getResourceCount()
     {
         $config = config('resources.parameters.count');
+        $count  = $this->request->get($config['name'], $config['default']);
 
-        return $this->request->get($config['name'], $config['default']);
+        return is_numeric($count) && $count > 0 ? $count : $config['default'];
     }
 }
