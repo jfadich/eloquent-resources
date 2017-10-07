@@ -44,7 +44,8 @@ abstract class Transformer extends TransformerAbstract
      */
     private $defaultOrderColumns = [
         'created' => 'created_at',
-        'updated' => 'updated_at'
+        'updated' => 'updated_at',
+        'id'      => 'id'
     ];
 
     /**
