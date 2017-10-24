@@ -21,8 +21,15 @@ return [
     | Query Parameters
     |--------------------------------------------------------------------------
     |
-    | This option controls the parameter name and default value. Includes max
-    | sets the recursion limit on fractal
+    | This option controls the parameter names and default values.
+    |
+    | The 'count' parameter controls the response pagination.
+    | Setting the value to 0 will disable pagination.
+    |
+    |
+    | The 'includes' parameter sets the name to be used when
+    | requesting relationship data.
+    | The includes max sets the recursion limit on fractal.
     |
     */
     'parameters'    => [

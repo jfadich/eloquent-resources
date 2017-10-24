@@ -289,7 +289,13 @@ class ResourceManager
                 }
             }
 
-            $collection = $collection->paginate($this->getResourceCount());
+            $count = $this->getResourceCount();
+
+            if($count == 0) {
+                $collection = $collection->get();
+            } else {
+                $collection = $collection->paginate($count);
+            }
         }
 
         if(is_array($collection)) {
