@@ -2,6 +2,7 @@
 
 namespace jfadich\EloquentResources\Traits;
 
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException as SymfonyUnauthorized
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use jfadich\EloquentResources\Exceptions\InvalidModelRelationException;
 use jfadich\EloquentResources\Exceptions\InvalidResourceTypeException;
@@ -54,7 +55,7 @@ trait HandlesExceptions
         if($e instanceof NotFoundHttpException)
             return $this->respondNotFound('Page not found');
 
-        if($e instanceof UnauthorizedHttpException)
+        if($e instanceof UnauthorizedHttpException || $e instanceof SymfonyUnauthorized)
             return $this->setErrorCode( Errors::FORBIDDEN )->respondForbidden($e->getMessage());
 
         if($e instanceof AuthenticationException)
