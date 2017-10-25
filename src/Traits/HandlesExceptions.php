@@ -2,7 +2,7 @@
 
 namespace jfadich\EloquentResources\Traits;
 
-use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException as SymfonyUnauthorized
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException as SymfonyUnauthorized;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use jfadich\EloquentResources\Exceptions\InvalidModelRelationException;
 use jfadich\EloquentResources\Exceptions\InvalidResourceTypeException;
