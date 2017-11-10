@@ -35,7 +35,7 @@ class LaravelServiceProvider extends ServiceProvider
         $this->request = $request;
 
         $this->publishes([
-            __DIR__.'/../../config/config.php' => config_path('transformers.php'),
+            __DIR__.'/../../config/config.php' => config_path('resources.php'),
         ]);
 
         if($this->app->runningInConsole()) {
@@ -55,11 +55,11 @@ class LaravelServiceProvider extends ServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(
-            __DIR__.'/../../config/config.php', 'transformers'
+            __DIR__.'/../../config/config.php', 'resources'
         );
 
         $this->app->singleton(ResourceManager::class, function ($app) {
-            $namespaces = config('transformers.namespaces');
+            $namespaces = config('resources.namespaces');
 
             return new ResourceManager($this->fractal, $this->request, $namespaces);
         });

@@ -38,7 +38,7 @@ trait Presentable
 
         if (is_string($this->presenter)) {
             if (!class_exists($this->presenter))
-                $this->presenter = config('transformers.classes.presenter');
+                $this->presenter = config('resources.classes.presenter');
 
             $this->presenter = new $this->presenter($this);
         }
@@ -53,7 +53,7 @@ trait Presentable
      */
     protected function resolvePresenterName()
     {
-        $namespaces = config('transformers.namespaces');
+        $namespaces = config('resources.namespaces');
 
         return str_replace($namespaces['models'], $namespaces['presenters'], get_class($this)) . 'Presenter';
     }

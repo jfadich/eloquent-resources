@@ -44,7 +44,8 @@ abstract class Transformer extends TransformerAbstract
      */
     private $defaultOrderColumns = [
         'created' => 'created_at',
-        'updated' => 'updated_at'
+        'updated' => 'updated_at',
+        'id'      => 'id'
     ];
 
     /**
@@ -65,7 +66,7 @@ abstract class Transformer extends TransformerAbstract
             return $this->parsedParams;
         }
 
-        $config = config('transformers.parameters');
+        $config = config('resources.parameters');
         $order = $params->get($config['sort']['name']);
         $limit = $params->get($config['count']['name']);
 

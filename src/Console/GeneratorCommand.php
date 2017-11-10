@@ -56,8 +56,8 @@ abstract class GeneratorCommand extends LaravelGenerator
         if ($this->type === null)
             throw new GeneratorException('Parent class not set');
 
-        $this->parentClass = config('transformers.classes.'.strtolower($this->type));
-        $this->namespace   = config('transformers.namespaces.'.strtolower($this->type).'s');
+        $this->parentClass = config('resources.classes.'.strtolower($this->type));
+        $this->namespace   = config('resources.namespaces.'.strtolower($this->type).'s');
     }
 
     /**
@@ -175,7 +175,7 @@ abstract class GeneratorCommand extends LaravelGenerator
      */
     protected function getStub()
     {
-        return base_path("vendor/jfadich/json-responder/stubs/{$this->type}.stub");
+        return base_path("vendor/jfadich/eloquent-resources/stubs/{$this->type}.stub");
     }
 
     /**

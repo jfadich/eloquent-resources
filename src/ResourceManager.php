@@ -89,9 +89,12 @@ class ResourceManager
     {
         $this->fractal = $fractal;
         $this->request = $request;
-        $this->fractal->setRecursionLimit(config('transformers.parameters.includes.max'));
+        $this->fractal->setRecursionLimit(config('resources.parameters.includes.max'));
 
-        $includesName = config('transformers.parameters.includes.name');
+        if($serializer = config('resources.serializer'))
+            $this->fractal->setSerializer(new $serializer);
+
+        $includesName = config('resources.parameters.includes.name');
         if($request->has($includesName))
             $this->fractal->parseIncludes($request->get($includesName));
 
@@ -210,17 +213,30 @@ class ResourceManager
         $includes = $this->getIncludes($transformer->getLazyIncludes());
 
         foreach($includes as $include) {
-            if(!method_exists($model, $include)) {
+            $nested = collect(explode('.',$include));
+            $params = $this->fractal->getIncludeParams($include);
+            $order = $params->get(config('resources.parameters.sort.name'));
+
+            if(!method_exists($model, $nested->first()) || $nested->isEmpty()) {
                 throw new InvalidModelRelationException("'$include' cannot be eager loaded. If the include is not an Eloquent relation try adding it to the 'lazyIncludes' array on the transformer");
             }
 
-            $relatedModel = $model->{$include}()->getRelated();
-            $relatedTransformer = $this->getTransformer($relatedModel);
+            if(!$order) {
+                $eager[] = $include;
+                continue;
+            }
+
+            do {
+                $nestedInclude = $nested->shift();
+
+                $model = $model->{$nestedInclude}()->getRelated();
+                $relatedTransformer = $this->getTransformer($model);
+            } while($nested->isNotEmpty());
 
             $params = $relatedTransformer->parseParams($this->fractal->getIncludeParams($include));
             $order = $params['order'] ?? null;
 
-            if (is_array($order) && count($order) === 2 && in_array($order[1], ['desc', 'asc'])) {
+            if (is_array($order)) {
                 $eager[$include] = function($query) use($order) {
                     return $query->orderBy($order[0], $order[1]);
                 };
@@ -251,7 +267,7 @@ class ResourceManager
 
         // If a query builder instance is given set the eager loads and paginate the data.
         if ($collection instanceof Builder || $collection instanceof Relation) {
-            $config = config('transformers.parameters');
+            $config = config('resources.parameters');
 
             if($this->request->has($config['sort']['name'])) {
                 $sort = explode('|', $this->request->get($config['sort']['name']));
@@ -273,12 +289,21 @@ class ResourceManager
                 }
             }
 
-            $collection = $collection->paginate($this->getResourceCount());
+            $count = $this->getResourceCount();
+
+            if($count == 0) {
+                $collection = $collection->get();
+            } else {
+                $collection = $collection->paginate($count);
+            }
         }
 
         if(is_array($collection)) {
             $resources = $collection;
-        } elseif($collection instanceof EloquentCollection || $collection instanceof LaravelCollection) {
+        } elseif(
+            $collection instanceof EloquentCollection ||
+            $collection instanceof LaravelCollection ||
+            $collection instanceof LengthAwarePaginator) {
             $resources = $collection->all();
         } else {
             throw new InvalidResourceException('Resources must be an array or Laravel Collection');
@@ -371,7 +396,7 @@ class ResourceManager
                 $resource = $resource->with($eager);
             } elseif( $resource instanceof Model ) {
                 if( empty($resource->getRelations()) ) {
-                    $resource = $resource->load($this->getEagerLoad($callback, $model));
+                    $resource = $resource->load($eager);
                 }
             }
         }
@@ -404,8 +429,9 @@ class ResourceManager
      */
     public function getResourceCount()
     {
-        $config = config('transformers.parameters.count');
+        $config = config('resources.parameters.count');
+        $count  = $this->request->get($config['name'], $config['default']);
 
-        return $this->request->get($config['name'], $config['default']);
+        return is_numeric($count) && $count > 0 ? $count : $config['default'];
     }
 }

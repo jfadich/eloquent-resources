@@ -9,7 +9,7 @@ require 'test_classes.php';
 if( ! function_exists('config')) {
     function config($key = null) {
         $config = include __DIR__ . '/../config/config.php';
-        $config = ['transformers' => $config];
+        $config = ['resources' => $config];
 
         if($key !== null)
             return array_get($config, $key);
@@ -24,7 +24,7 @@ if( ! function_exists('app')) {
 
         if($make === ResourceManager::class) {
             if ($manager === null) {
-                $namespaces = config('transformers.namespaces');
+                $namespaces = config('resources.namespaces');
                 $manager = new ResourceManager(new \League\Fractal\Manager, new \Illuminate\Http\Request, $namespaces);
             }
 

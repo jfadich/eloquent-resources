@@ -42,7 +42,7 @@ class MakeTransformerCommand extends GeneratorCommand
      */
     public function __construct(Filesystem $files)
     {
-        $this->parentClass = config('transformers.classes.transformer');
+        $this->parentClass = config('resources.classes.transformer');
 
         parent::__construct($files);
     }
@@ -102,10 +102,10 @@ class MakeTransformerCommand extends GeneratorCommand
     private function parseModel()
     {
         if (!$model = $this->option('model'))
-            $model = config('transformers.classes.model');
+            $model = config('resources.classes.model');
 
-        if (!starts_with($model, config('transformers.namespaces.models')))
-            $model = config('transformers.namespaces.models') .'\\'. $model;
+        if (!starts_with($model, config('resources.namespaces.models')))
+            $model = config('resources.namespaces.models') .'\\'. $model;
 
         $namespace = explode('\\', $model);
 
