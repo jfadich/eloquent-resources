@@ -10,6 +10,7 @@ use jfadich\EloquentResources\Exceptions\EloquentResourcesException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\UnauthorizedException;
+use Illuminate\Validation\ValidationException;
 use jfadich\EloquentResources\ResourceManager;
 use Illuminate\Auth\AuthenticationException;
 use jfadich\EloquentResources\Errors;
@@ -28,6 +29,10 @@ trait HandlesExceptions
      */
     public function renderJsonExceptions(\Exception $e)
     {
+        if($e instanceof ValidationException) {
+            return $this->respondUnprocessableEntity($e->getMessage(), $e->errors());
+        }
+        
         if ($e instanceof ModelNotFoundException) {
             $this->setErrorCode(Errors::ENTITY_NOT_FOUND);
 
