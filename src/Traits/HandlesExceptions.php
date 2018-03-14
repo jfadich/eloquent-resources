@@ -34,7 +34,7 @@ trait HandlesExceptions
             return $this->respondUnprocessableEntity($e->getMessage(), $e->errors());
         }
         
-        if($exception instanceof AuthorizationException) {
+        if($e instanceof AuthorizationException) {
             return $this->respondForbidden($exception->getMessage());
         }
         
