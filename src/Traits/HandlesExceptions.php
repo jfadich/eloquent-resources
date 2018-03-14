@@ -9,6 +9,7 @@ use jfadich\EloquentResources\Exceptions\InvalidResourceTypeException;
 use jfadich\EloquentResources\Exceptions\EloquentResourcesException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Validation\UnauthorizedException;
 use Illuminate\Validation\ValidationException;
 use jfadich\EloquentResources\ResourceManager;
@@ -31,6 +32,10 @@ trait HandlesExceptions
     {
         if($e instanceof ValidationException) {
             return $this->respondUnprocessableEntity($e->getMessage(), $e->errors());
+        }
+        
+        if($exception instanceof AuthorizationException) {
+            return $this->respondForbidden($exception->getMessage());
         }
         
         if ($e instanceof ModelNotFoundException) {
