@@ -35,7 +35,7 @@ trait HandlesExceptions
         }
         
         if($e instanceof AuthorizationException) {
-            return $this->respondForbidden($exception->getMessage());
+            return $this->respondForbidden($e->getMessage());
         }
         
         if ($e instanceof ModelNotFoundException) {
