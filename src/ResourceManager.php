@@ -419,7 +419,7 @@ class ResourceManager
         if(empty($except))
             return $this->fractal->getRequestedIncludes();
 
-        return array_except($this->fractal->getRequestedIncludes(), $except);
+        return array_diff($this->fractal->getRequestedIncludes(), $except);
     }
 
     /**
