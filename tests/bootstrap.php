@@ -1,6 +1,7 @@
 <?php
 
 
+use Illuminate\Support\Arr;
 use jfadich\EloquentResources\ResourceManager;
 
 require __DIR__ . '/../vendor/autoload.php';
@@ -12,7 +13,7 @@ if( ! function_exists('config')) {
         $config = ['resources' => $config];
 
         if($key !== null)
-            return array_get($config, $key);
+            return Arr::get($config, $key);
 
         return $config;
     }
