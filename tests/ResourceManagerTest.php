@@ -79,9 +79,16 @@ class ResourceManagerTest extends TestCase
     {
         $manager = new ResourceManager(New League\Fractal\Manager(), new \Illuminate\Http\Request());
         $collection = new \Illuminate\Database\Eloquent\Collection([new TestModel]);
+        $emptyCollection = new \Illuminate\Database\Eloquent\Collection();
 
         $resource = $manager->buildCollectionResource($collection);
         $this->assertEquals(['data' => [['test' => 'transformed']]], $resource->toArray());
+
+        $resource = $manager->buildCollectionResource($emptyCollection);
+        $this->assertEquals(['data' => []], $resource->toArray());
+
+        $resource = $manager->buildCollectionResource([]);
+        $this->assertEquals(['data' => []], $resource->toArray());
 
         $resource = $manager->buildCollectionResource($collection, ['key' => 'meta value']);
         $this->assertEquals([
