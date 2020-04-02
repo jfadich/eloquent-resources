@@ -26,10 +26,10 @@ use League\Fractal\{
     ParamBag
 };
 
-use Illuminate\{
-    Contracts\Pagination\LengthAwarePaginator,
+use Illuminate\{Contracts\Pagination\LengthAwarePaginator,
     Support\Collection as LaravelCollection,
-    Http\Request
+    Http\Request,
+    Support\Str
 };
 
 
@@ -122,7 +122,7 @@ class ResourceManager
             $class = $this->modelNamespace;
 
             foreach ($type as $namespace) {
-                $class .= '\\' . studly_case($namespace);
+                $class .= '\\' . Str::studly($namespace);
             }
 
             if (!class_exists($class)) {
@@ -151,7 +151,7 @@ class ResourceManager
 
             $type = [];
             foreach ($namespace as $segment) {
-                $type[] = snake_case($segment);
+                $type[] = Str::snake($segment);
             }
 
             $this->types[$class] = implode('-', $type);
@@ -259,7 +259,7 @@ class ResourceManager
      */
     public function buildCollectionResource($collection, $meta = [], $callback = null)
     {
-        if(empty($collection)) {
+        if(count($collection) === 0) {
             return $this->fractal->createData(new Collection([], function() { } ));
         }
 

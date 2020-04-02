@@ -9,6 +9,7 @@ use League\Fractal\TransformerAbstract;
 use Illuminate\Support\Collection;
 use League\Fractal\ParamBag;
 use BadMethodCallException;
+use Illuminate\Support\Str;
 
 /**
  * Transformers take a Model object and prepare it for output to JSON. It can include nested relations dynamically
@@ -152,7 +153,7 @@ abstract class Transformer extends TransformerAbstract
      */
     protected function resolveRelationName($method)
     {
-        $relation = camel_case(str_replace('include', '', $method));
+        $relation = Str::camel(str_replace('include', '', $method));
 
         if (!in_array($relation, $this->getAvailableIncludes())) {
             return false;
