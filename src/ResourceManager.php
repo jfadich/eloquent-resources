@@ -259,7 +259,7 @@ class ResourceManager
      */
     public function buildCollectionResource($collection, $meta = [], $callback = null)
     {
-        if(count($collection) === 0) {
+        if($collection->count() === 0) {
             return $this->fractal->createData(new Collection([], function() { } ));
         }
 
