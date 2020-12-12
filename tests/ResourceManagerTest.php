@@ -101,4 +101,23 @@ class ResourceManagerTest extends TestCase
         });
         $this->assertEquals(['data' => [['test' => 'anonymously transformed']]], $resource->toArray());
     }
+
+    public function test_make_collection_from_query()
+    {
+        $request = new \Illuminate\Http\Request();
+        $request->initialize(['limit' => 0]);
+
+        $manager = new ResourceManager(New League\Fractal\Manager(), $request);
+        $model = $this->getMockBuilder(\Illuminate\Database\Eloquent\Builder::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getModel', 'get'])
+            ->getMock();
+
+        $model->method('getModel')->willReturn(new TestModel());
+        $model->method('get')->willReturn(new \Illuminate\Support\Collection([new TestModel()]));
+
+        $resource = $manager->buildCollectionResource($model);
+
+        $this->assertEquals(['data' => [['test' => 'transformed']]], $resource->toArray());
+    }
 }

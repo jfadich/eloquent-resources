@@ -14,6 +14,7 @@
         }
     },
     "require": {
+        "php": ">=7.3",
         "illuminate/http": "5.*|6.*|7.*",
         "illuminate/support": "5.*|6.*|7.*",
         "league/fractal": "^0.19.0",
