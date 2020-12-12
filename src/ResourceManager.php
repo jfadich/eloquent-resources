@@ -259,7 +259,7 @@ class ResourceManager
      */
     public function buildCollectionResource($collection, $meta = [], $callback = null)
     {
-        if(count($collection) === 0) {
+        if(is_countable($collection) && count($collection) === 0 || method_exists($collection, 'count') && $collection->count() === 0) {
             return $this->fractal->createData(new Collection([], function() { } ));
         }
 
@@ -432,6 +432,6 @@ class ResourceManager
         $config = config('resources.parameters.count');
         $count  = $this->request->get($config['name'], $config['default']);
 
-        return is_numeric($count) && $count > 0 ? $count : $config['default'];
+        return is_numeric($count) && $count >= 0 ? $count : $config['default'];
     }
 }
