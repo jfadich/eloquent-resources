@@ -7,6 +7,8 @@ namespace jfadich\EloquentResources\Traits;
  */
 trait Presentable
 {
+    protected $presenter;
+    
     /**
      * If a property is provided, presenter will parse the property on the model
      * using any additional arguments as options.
